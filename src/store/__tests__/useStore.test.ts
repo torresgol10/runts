@@ -61,7 +61,12 @@ describe('useStore', () => {
 
     it('should clear output', () => {
         // Manually add some output first
-        useStore.setState({ output: ['line 1', 'line 2'] });
+        useStore.setState({
+            output: [
+                { id: '1', content: 'line 1', timestamp: 123 },
+                { id: '2', content: 'line 2', timestamp: 456 }
+            ]
+        });
         const { clearOutput } = useStore.getState();
         clearOutput();
         expect(useStore.getState().output).toHaveLength(0);

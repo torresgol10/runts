@@ -4,6 +4,7 @@ import { CodeEditor } from './components/Editor';
 import { Console } from './components/Console';
 import { Tabs } from './components/Tabs';
 import { Sidebar } from './components/Sidebar';
+import lzString from 'lz-string';
 
 function App() {
     const {
@@ -24,10 +25,27 @@ function App() {
         toggleAutoRun,
         renameTab,
         theme,
-        setTheme
+        setTheme,
+        deserialize
     } = useStore();
 
     useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const codeParam = params.get('code');
+        if (codeParam) {
+            try {
+                const decompressed = lzString.decompressFromEncodedURIComponent(codeParam);
+                if (decompressed) {
+                    const data = JSON.parse(decompressed);
+                    deserialize(data);
+                    // Standard boot after hydration if needed, but boot check handles it
+                    // Remove param from URL without reload to clean up
+                    window.history.replaceState({}, '', window.location.pathname);
+                }
+            } catch (e) {
+                console.error("Failed to load shared state", e);
+            }
+        }
         boot();
     }, []);
 
@@ -99,7 +117,11 @@ function App() {
                     </div>
 
                     <div className="h-1/2 md:h-full md:w-[40%] min-w-[300px] flex flex-col min-h-0">
-                        <Console logs={output} onClear={clearOutput} />
+                        <Console
+                            logs={output}
+                            onClear={clearOutput}
+                            matchLines={useStore(s => s.matchLines)}
+                        />
                     </div>
                 </div>
             </div>

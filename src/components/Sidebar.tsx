@@ -1,6 +1,14 @@
-import { Package, Play, Settings, Zap } from 'lucide-react';
+import { Package, Play, Settings, Zap, Database, Save, Scissors, AlignLeft } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
+import { useStore } from '../store/useStore';
 import { themes, ThemeId } from '../utils/themes';
+import { PackageManager } from './PackageManager';
+import { SnippetManager } from './SnippetManager';
+import { EnvManager } from './EnvManager';
+import { downloadProjectZip } from '../utils/project';
+import { formatCode } from '../utils/prettier';
+
+import { ShareButton } from './ShareButton';
 
 interface SidebarProps {
     onInstall: (pkg: string) => void;
@@ -12,8 +20,9 @@ interface SidebarProps {
     onThemeChange: (theme: ThemeId) => void;
 }
 
+type PopoverType = 'none' | 'package' | 'settings' | 'snippets' | 'env';
+
 export const Sidebar = ({
-    onInstall,
     onRun,
     isRunning,
     autoRunEnabled,
@@ -21,10 +30,8 @@ export const Sidebar = ({
     currentTheme,
     onThemeChange
 }: SidebarProps) => {
-    const [installInput, setInstallInput] = useState('');
-    const [isInstalling, setIsInstalling] = useState(false);
-    const [activePopover, setActivePopover] = useState<'none' | 'package' | 'settings'>('none');
-
+    const { activeTabId, tabs, updateTabContent, matchLines, toggleMatchLines } = useStore();
+    const [activePopover, setActivePopover] = useState<PopoverType>('none');
     const sidebarRef = useRef<HTMLDivElement>(null);
 
     // Close popover when clicking outside
@@ -38,28 +45,29 @@ export const Sidebar = ({
         if (activePopover !== 'none') {
             document.addEventListener('mousedown', handleClickOutside);
         }
-
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [activePopover]);
 
-    const handleInstall = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!installInput.trim()) return;
-        setIsInstalling(true);
-        await onInstall(installInput);
-        setInstallInput('');
-        setIsInstalling(false);
-        setActivePopover('none');
-    };
-
-    const togglePopover = (name: 'package' | 'settings') => {
+    const togglePopover = (name: PopoverType) => {
         setActivePopover(current => current === name ? 'none' : name);
     };
 
+    const handleFormat = async () => {
+        const activeTab = tabs.find(t => t.id === activeTabId);
+        if (activeTab) {
+            const formatted = await formatCode(activeTab.content);
+            updateTabContent(activeTabId, formatted);
+        }
+    };
+
+    const handleSave = () => {
+        downloadProjectZip(tabs.map(t => ({ name: t.title, content: t.content })));
+    };
+
     return (
-        <div ref={sidebarRef} className="w-16 flex flex-col items-center bg-[#0f0f11] border-r border-gray-800 py-4 gap-4 relative z-50">
+        <div ref={sidebarRef} className="w-16 flex flex-col items-center bg-[#0f0f11] border-r border-gray-800 py-4 gap-4 relative z-40">
             <div className="p-2 bg-accent/10 rounded-xl mb-4">
                 <span className="font-bold text-accent text-xl">TS</span>
             </div>
@@ -89,51 +97,82 @@ export const Sidebar = ({
 
             <div className="w-8 h-[1px] bg-gray-800 my-2" />
 
+            {/* Snippets */}
+            <div className="relative">
+                <button
+                    onClick={() => togglePopover('snippets')}
+                    className={`p-3 rounded-xl transition-colors ${activePopover === 'snippets' ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/10'}`}
+                    title="Snippets"
+                >
+                    <Scissors size={20} />
+                </button>
+                {activePopover === 'snippets' && (
+                    <div className="absolute left-full top-0 ml-4 bg-[#1e1e24] border border-gray-700 rounded-lg shadow-xl z-50">
+                        <SnippetManager />
+                    </div>
+                )}
+            </div>
+
             {/* Package Manager */}
             <div className="relative">
                 <button
                     onClick={() => togglePopover('package')}
-                    className={`p-3 rounded-xl transition-colors ${activePopover === 'package'
-                        ? 'text-white bg-white/10'
-                        : 'text-gray-400 hover:text-white hover:bg-white/10'
-                        }`}
+                    className={`p-3 rounded-xl transition-colors ${activePopover === 'package' ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/10'}`}
                     title="Packages"
                 >
                     <Package size={20} />
                 </button>
-
                 {activePopover === 'package' && (
-                    <div className="absolute left-full top-0 ml-4 w-64 bg-[#1e1e24] border border-gray-700 rounded-lg shadow-xl p-4 z-50">
-                        <h3 className="text-sm font-semibold mb-2">Install Package</h3>
-                        <form onSubmit={handleInstall} className="flex gap-2">
-                            <input
-                                type="text"
-                                value={installInput}
-                                onChange={(e) => setInstallInput(e.target.value)}
-                                placeholder="lodash"
-                                className="flex-1 bg-black/30 border border-gray-700 rounded px-2 py-1 text-sm focus:outline-none focus:border-accent"
-                                autoFocus
-                            />
-                            <button
-                                type="submit"
-                                disabled={isInstalling}
-                                className="bg-accent text-black px-2 py-1 rounded text-xs font-bold hover:bg-yellow-400"
-                            >
-                                {isInstalling ? '...' : '+'}
-                            </button>
-                        </form>
+                    <div className="absolute left-full top-0 ml-4 bg-[#1e1e24] border border-gray-700 rounded-lg shadow-xl z-50">
+                        <PackageManager />
                     </div>
                 )}
             </div>
+
+            {/* Env Vars */}
+            <div className="relative">
+                <button
+                    onClick={() => togglePopover('env')}
+                    className={`p-3 rounded-xl transition-colors ${activePopover === 'env' ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/10'}`}
+                    title="Environment Variables"
+                >
+                    <Database size={20} />
+                </button>
+                {activePopover === 'env' && (
+                    <div className="absolute left-full top-0 ml-4 bg-[#1e1e24] border border-gray-700 rounded-lg shadow-xl z-50">
+                        <EnvManager />
+                    </div>
+                )}
+            </div>
+
+            <div className="w-8 h-[1px] bg-gray-800 my-2" />
+
+            {/* Format */}
+            <button
+                onClick={handleFormat}
+                className="p-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+                title="Format Code (Prettier)"
+            >
+                <AlignLeft size={20} />
+            </button>
+
+            {/* Save / Export */}
+            <button
+                onClick={handleSave}
+                className="p-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+                title="Export Project (ZIP)"
+            >
+                <Save size={20} />
+            </button>
+
+            {/* Share */}
+            <ShareButton />
 
             {/* Settings */}
             <div className="mt-auto relative">
                 <button
                     onClick={() => togglePopover('settings')}
-                    className={`p-3 rounded-xl transition-colors ${activePopover === 'settings'
-                        ? 'text-white bg-white/10'
-                        : 'text-gray-400 hover:text-white hover:bg-white/10'
-                        }`}
+                    className={`p-3 rounded-xl transition-colors ${activePopover === 'settings' ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/10'}`}
                     title="Settings"
                 >
                     <Settings size={20} />
@@ -155,9 +194,20 @@ export const Sidebar = ({
                                     ))}
                                 </select>
                             </div>
+
+                            <div className="flex justify-between items-center">
+                                <span className="text-gray-400">Match Lines</span>
+                                <button
+                                    onClick={toggleMatchLines}
+                                    className={`w-8 h-4 rounded-full relative transition-colors ${matchLines ? 'bg-accent' : 'bg-gray-700'}`}
+                                >
+                                    <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all ${matchLines ? 'left-4.5' : 'left-0.5'}`} style={{ left: matchLines ? '18px' : '2px' }} />
+                                </button>
+                            </div>
+
                             <div className="flex justify-between items-center">
                                 <span className="text-gray-400">Version</span>
-                                <span className="text-white">1.0.0</span>
+                                <span className="text-white">Full 1.0</span>
                             </div>
                             <div className="text-xs text-gray-500 pt-2 text-center border-t border-gray-700">
                                 RunTS by Antigravity

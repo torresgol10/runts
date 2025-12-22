@@ -1,24 +1,23 @@
-export type ThemeId = 'runts-dark' | 'dracula' | 'light' | 'monokai';
+export type ThemeId = 'runts-dark' | 'dracula' | 'light' | 'monokai' | 'nord' | 'solarized-dark' | 'github-light';
 
 export interface ThemeColors {
-    bgPrimary: string;   // Sidebar, Console bg
-    bgSecondary: string; // Editor bg, Panels
+    bgPrimary: string;
+    bgSecondary: string;
     textPrimary: string;
     textSecondary: string;
     border: string;
     accent: string;
-    accentTraffic: string; // For run button, etc
+    accentTraffic: string;
 }
 
 export interface Theme {
     id: ThemeId;
     name: string;
     colors: ThemeColors;
-    monacoTheme: string; // Base monaco theme to extend ('vs-dark' or 'vs')
+    monacoTheme: string;
     monacoColors: {
         'editor.background': string;
         'editor.foreground': string;
-        // Add more specific monaco overrides if needed
     };
 }
 
@@ -28,12 +27,12 @@ export const themes: Theme[] = [
         name: 'RunTS Dark',
         colors: {
             bgPrimary: '#0f0f11',
-            bgSecondary: '#1d1d21', // Slightly lighter
+            bgSecondary: '#1d1d21',
             textPrimary: '#e4e4e7',
             textSecondary: '#a1a1aa',
             border: '#27272a',
-            accent: '#eab308', // Yellow-500
-            accentTraffic: '#16a34a' // Green-600
+            accent: '#eab308',
+            accentTraffic: '#16a34a'
         },
         monacoTheme: 'vs-dark',
         monacoColors: {
@@ -50,8 +49,8 @@ export const themes: Theme[] = [
             textPrimary: '#f8f8f2',
             textSecondary: '#bfbfbf',
             border: '#6272a4',
-            accent: '#bd93f9', // Purple
-            accentTraffic: '#50fa7b' // Green
+            accent: '#bd93f9',
+            accentTraffic: '#50fa7b'
         },
         monacoTheme: 'vs-dark',
         monacoColors: {
@@ -68,13 +67,67 @@ export const themes: Theme[] = [
             textPrimary: '#f8f8f2',
             textSecondary: '#75715e',
             border: '#75715e',
-            accent: '#fd971f', // Orange
-            accentTraffic: '#a6e22e' // Green
+            accent: '#fd971f',
+            accentTraffic: '#a6e22e'
         },
         monacoTheme: 'vs-dark',
         monacoColors: {
             'editor.background': '#272822',
             'editor.foreground': '#f8f8f2',
+        }
+    },
+    {
+        id: 'nord',
+        name: 'Nord',
+        colors: {
+            bgPrimary: '#2e3440',
+            bgSecondary: '#3b4252',
+            textPrimary: '#d8dee9',
+            textSecondary: '#4c566a',
+            border: '#434c5e',
+            accent: '#88c0d0',
+            accentTraffic: '#a3be8c'
+        },
+        monacoTheme: 'vs-dark',
+        monacoColors: {
+            'editor.background': '#2e3440',
+            'editor.foreground': '#d8dee9',
+        }
+    },
+    {
+        id: 'solarized-dark',
+        name: 'Solarized Dark',
+        colors: {
+            bgPrimary: '#002b36',
+            bgSecondary: '#073642',
+            textPrimary: '#839496',
+            textSecondary: '#586e75',
+            border: '#586e75',
+            accent: '#2aa198',
+            accentTraffic: '#859900'
+        },
+        monacoTheme: 'vs-dark',
+        monacoColors: {
+            'editor.background': '#002b36',
+            'editor.foreground': '#839496',
+        }
+    },
+    {
+        id: 'github-light',
+        name: 'GitHub Light',
+        colors: {
+            bgPrimary: '#ffffff',
+            bgSecondary: '#f6f8fa',
+            textPrimary: '#24292f',
+            textSecondary: '#57606a',
+            border: '#d0d7de',
+            accent: '#0969da',
+            accentTraffic: '#2da44e'
+        },
+        monacoTheme: 'vs',
+        monacoColors: {
+            'editor.background': '#ffffff',
+            'editor.foreground': '#24292f',
         }
     },
     {
@@ -86,8 +139,8 @@ export const themes: Theme[] = [
             textPrimary: '#18181b',
             textSecondary: '#71717a',
             border: '#e4e4e7',
-            accent: '#3b82f6', // Blue
-            accentTraffic: '#22c55e' // Green-500
+            accent: '#3b82f6',
+            accentTraffic: '#22c55e'
         },
         monacoTheme: 'vs',
         monacoColors: {
