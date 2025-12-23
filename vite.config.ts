@@ -17,7 +17,7 @@ export default defineConfig({
         VitePWA({
             registerType: 'autoUpdate',
             workbox: {
-                maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
+                maximumFileSizeToCacheInBytes: 8 * 1024 * 1024, // 8MB
             },
             manifest: {
                 name: 'RunTS - TypeScript Playground',
