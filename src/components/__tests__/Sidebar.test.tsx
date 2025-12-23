@@ -30,7 +30,7 @@ describe('Sidebar Component', () => {
         render(<Sidebar {...defaultProps} />);
         const packageButton = page.getByTitle('Packages');
         await packageButton.click();
-        await expect.element(page.getByText('Install Package')).toBeVisible();
+        await expect.element(page.getByText('NPM Packages')).toBeVisible();
     });
 
     it('shows settings popover when settings icon is clicked', async () => {

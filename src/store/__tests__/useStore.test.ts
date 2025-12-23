@@ -25,7 +25,7 @@ describe('useStore', () => {
         addTab();
         const state = useStore.getState();
         expect(state.tabs).toHaveLength(2);
-        expect(state.tabs[1].title).toBe('Untitled');
+        expect(state.tabs[1].title).toBe('Untitled.ts');
     });
 
     it('should set active tab', () => {

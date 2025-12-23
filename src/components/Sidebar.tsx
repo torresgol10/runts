@@ -187,7 +187,7 @@ export const Sidebar = ({
                                 <select
                                     value={currentTheme}
                                     onChange={(e) => onThemeChange(e.target.value as ThemeId)}
-                                    className="bg-black/30 border border-gray-700 rounded px-2 py-1 text-sm text-white focus:outline-none focus:border-accent"
+                                    className="bg-gray-900 border border-gray-700 rounded px-2 py-1 text-sm text-white focus:outline-none focus:border-accent"
                                 >
                                     {themes.map(t => (
                                         <option key={t.id} value={t.id}>{t.name}</option>

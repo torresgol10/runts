@@ -8,7 +8,7 @@ describe('Prettier Utils', () => {
 
         // Prettier might add newlines/semicolons depending on defaults
         expect(output).toContain('const a = 1;');
-        expect(output).toContain('console.log("test");');
+        expect(output).toContain("console.log('test');");
     });
 
     it('should handle invalid code gracefully', async () => {
