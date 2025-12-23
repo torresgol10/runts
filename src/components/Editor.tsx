@@ -3,6 +3,8 @@ import { useEffect, useRef } from 'react';
 import { themes, ThemeId } from '../utils/themes';
 import { useStore } from '../store/useStore';
 import { createTypeFetcher } from '../utils/typeFetcher';
+import prettier from 'prettier/standalone';
+import parserTypeScript from 'prettier/parser-typescript';
 
 interface CodeEditorProps {
     value: string;
@@ -115,8 +117,34 @@ export const CodeEditor = ({ value, onChange, theme }: CodeEditorProps) => {
 
     }, [output, matchLines, monaco]);
 
-    const handleMount: OnMount = (editor) => {
+    const handleMount: OnMount = (editor, monacoInstance) => {
         editorRef.current = editor;
+
+        // Add Format Command (Shift + Alt + F)
+        editor.addCommand(monacoInstance.KeyMod.Shift | monacoInstance.KeyMod.Alt | monacoInstance.KeyCode.KeyF, async () => {
+            try {
+                const currentCode = editor.getValue();
+                const formatted = await prettier.format(currentCode, {
+                    parser: 'typescript',
+                    plugins: [parserTypeScript],
+                    singleQuote: true,
+                    tabWidth: 4,
+                    printWidth: 100,
+                });
+
+                // Push edit to stack so it can be undone
+                editor.executeEdits('prettier', [{
+                    range: editor.getModel()!.getFullModelRange(),
+                    text: formatted,
+                    forceMoveMarkers: true
+                }]);
+
+                // Trigger change manually as executeEdits might not trigger generic onChange in all setups logic
+                // Actually executeEdits DOES trigger content change events which onChange catches.
+            } catch (e) {
+                console.error('Formatting failed:', e);
+            }
+        });
     };
 
     return (

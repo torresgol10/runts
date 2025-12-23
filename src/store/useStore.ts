@@ -15,6 +15,7 @@ interface LogEntry {
     id: string;
     line?: number;
     content: string;
+    method?: 'log' | 'error' | 'warn' | 'info';
     timestamp: number;
 }
 
@@ -224,7 +225,22 @@ export const useStore = create<RuntsState>()(persist((set, get) => ({
                 }
             });
 
-            await writeFile('index.cjs', transpiled.outputText);
+            // Inject console shim to capture method types via stdout
+            const consoleShim = `
+const __runts_log = console.log;
+const __runts_error = console.error;
+const __runts_warn = console.warn;
+const __runts_info = console.info;
+
+console.log = (...args) => __runts_log('__RUNTS_LOG__', ...args);
+console.error = (...args) => __runts_log('__RUNTS_ERR__', ...args); // Redirect to stdout for capture
+console.warn = (...args) => __runts_log('__RUNTS_WRN__', ...args);
+console.info = (...args) => __runts_log('__RUNTS_INF__', ...args);
+`;
+
+            const finalCode = consoleShim + '\n' + transpiled.outputText;
+
+            await writeFile('index.cjs', finalCode);
 
             const process = await instance.spawn('node', ['index.cjs'], {
                 env: { ...envVars }
@@ -244,30 +260,37 @@ export const useStore = create<RuntsState>()(persist((set, get) => ({
             const flushInterval = setInterval(flushFilter, 50);
 
             const processLine = (lineStr: string) => {
-                if (!matchLines) {
-                    logBuffer.push({
-                        id: Math.random().toString(36),
-                        content: lineStr,
-                        timestamp: Date.now()
-                    });
-                    return;
-                }
+                let method: LogEntry['method'] = 'log';
+                let content = lineStr;
 
+                // Detect Method
+                if (content.includes('__RUNTS_ERR__')) { method = 'error'; content = content.replace('__RUNTS_ERR__ ', '').replace('__RUNTS_ERR__', ''); }
+                else if (content.includes('__RUNTS_WRN__')) { method = 'warn'; content = content.replace('__RUNTS_WRN__ ', '').replace('__RUNTS_WRN__', ''); }
+                else if (content.includes('__RUNTS_INF__')) { method = 'info'; content = content.replace('__RUNTS_INF__ ', '').replace('__RUNTS_INF__', ''); }
+                else if (content.includes('__RUNTS_LOG__')) { method = 'log'; content = content.replace('__RUNTS_LOG__ ', '').replace('__RUNTS_LOG__', ''); }
+
+                // Detect Line Number
                 let line: number | undefined;
-                let cleanPart = lineStr;
-
-                const match = lineStr.match(/\[RUNTS_LINE:(\d+)\]/);
-                if (match) {
-                    try {
-                        line = parseInt(match[1]);
-                        cleanPart = lineStr.replace(/\[RUNTS_LINE:\d+\]\s*,?\s*/, '');
-                    } catch (e) { }
+                if (matchLines) {
+                    const match = content.match(/\[RUNTS_LINE:(\d+)\]/);
+                    if (match) {
+                        try {
+                            line = parseInt(match[1]);
+                            content = content.replace(/\[RUNTS_LINE:\d+\]\s*,?\s*/, '');
+                        } catch (e) { }
+                    }
+                } else {
+                    // Clean line tag even if match lines is off if it leaked? Should check.
+                    // But for now, just standard behavior.
+                    // Actually, if we injected transformCode, the tag is there.
+                    // We should clean it if 'matchLines' is true logic was applied upstream.
                 }
 
                 logBuffer.push({
                     id: Math.random().toString(36),
-                    content: cleanPart,
+                    content: content,
                     line,
+                    method,
                     timestamp: Date.now()
                 });
             };
