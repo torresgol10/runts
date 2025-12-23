@@ -16,6 +16,7 @@ export default defineConfig({
         tailwindcss(),
         VitePWA({
             registerType: 'autoUpdate',
+            scope: '/playground',
             workbox: {
                 maximumFileSizeToCacheInBytes: 8 * 1024 * 1024, // 8MB
             },
@@ -26,6 +27,8 @@ export default defineConfig({
                 theme_color: '#09090b',
                 background_color: '#09090b',
                 display: 'standalone',
+                scope: '/playground',
+                start_url: '/playground',
                 orientation: 'portrait',
                 icons: [
                     {

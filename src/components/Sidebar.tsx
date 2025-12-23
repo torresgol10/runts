@@ -1,3 +1,4 @@
+import { Logo } from './Logo';
 import { Package, Play, Settings, Zap, Database, Save, Scissors, AlignLeft } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { useStore } from '../store/useStore';
@@ -68,8 +69,8 @@ export const Sidebar = ({
 
     return (
         <div ref={sidebarRef} className="w-16 flex flex-col items-center bg-[#0f0f11] border-r border-gray-800 py-4 gap-4 relative z-40">
-            <div className="p-2 bg-accent/10 rounded-xl mb-4">
-                <span className="font-bold text-accent text-xl">TS</span>
+            <div className="mb-4">
+                <Logo />
             </div>
 
             <button
