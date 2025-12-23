@@ -31,7 +31,7 @@ export const themes: Theme[] = [
             textPrimary: '#e4e4e7',
             textSecondary: '#a1a1aa',
             border: '#27272a',
-            accent: '#eab308',
+            accent: '#3178C6',
             accentTraffic: '#16a34a'
         },
         monacoTheme: 'vs-dark',

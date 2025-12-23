@@ -37,7 +37,7 @@ export const PackageManager = () => {
                 <button
                     type="submit"
                     disabled={isInstalling || !installInput}
-                    className="bg-accent text-black px-3 py-1 rounded text-xs font-bold hover:bg-yellow-400 disabled:opacity-50"
+                    className="bg-accent text-white px-3 py-1 rounded text-xs font-bold hover:opacity-90 disabled:opacity-50"
                 >
                     {isInstalling ? '...' : <Download size={14} />}
                 </button>

@@ -59,7 +59,7 @@ export const SnippetManager = () => {
                         >
                             Cancel
                         </button>
-                        <button type="submit" disabled={!name || !code} className="bg-accent text-black px-2 py-1 rounded text-xs font-bold">
+                        <button type="submit" disabled={!name || !code} className="bg-accent text-white px-2 py-1 rounded text-xs font-bold">
                             Save
                         </button>
                     </div>
