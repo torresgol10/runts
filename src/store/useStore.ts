@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware';
 import { getWebContainerInstance, writeFile } from '../webcontainer/instance';
 import ts from 'typescript';
 import { ThemeId } from '../utils/themes';
+import { transformCode } from '../utils/transform';
 
 interface Tab {
     id: string;
@@ -31,14 +32,11 @@ interface RuntsState {
     isRunning: boolean;
     autoRunEnabled: boolean;
     theme: ThemeId;
-
-    // New Feature State
     matchLines: boolean;
     envVars: Record<string, string>;
     snippets: Snippet[];
     dependencies: Record<string, string>;
 
-    // Actions
     boot: () => Promise<void>;
     addTab: () => void;
     closeTab: (id: string) => void;
@@ -54,8 +52,6 @@ interface RuntsState {
     clearOutput: () => void;
     installPackage: (pkg: string) => Promise<void>;
     setTheme: (theme: ThemeId) => void;
-
-    // New Actions
     addEnvVar: (key: string, value: string) => void;
     removeEnvVar: (key: string) => void;
     addSnippet: (name: string, code: string) => void;
@@ -67,14 +63,12 @@ interface RuntsState {
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 let activeProcess: any = null;
 
-import { transformCode } from '../utils/transform';
-
 export const useStore = create<RuntsState>()(persist((set, get) => ({
     isBooted: false,
     tabs: [{
         id: 'main',
         title: 'Main.ts',
-        content: `/**\n * Welcome to RunTS! 🚀\n * This is a secure, local-first TypeScript playground.\n */\n\ninterface SystemStatus {\n  service: string;\n  uptime: number;\n  health: 'Healthy' | 'Warning' | 'Down';\n}\n\nconst services: SystemStatus[] = [\n  { service: 'API Gateway', uptime: 99.9, health: 'Healthy' },\n  { service: 'Auth Service', uptime: 98.5, health: 'Warning' },\n  { service: 'Database', uptime: 100, health: 'Healthy' }\n];\n\nasync function monitorSystem() {\n  console.log("Initializing RunTS System Monitor...");\n  \n  for (const s of services) {\n    await new Promise(r => setTimeout(r, 600));\n    \n    const icon = s.health === 'Healthy' ? '✅' : '⚠️';\n    console.log(\`\${icon} Checking \${s.service}...\`);\n    \n    if (s.health === 'Warning') {\n      console.log(\`[Alert] Latency spike detected on \${s.service}!\`);\n    }\n  }\n\n  console.log("\\n--- Final Status Report ---");\n  console.log(services);\n}\n\nmonitorSystem();`
+        content: 'console.log("Hello RunTS! 🚀");'
     }],
     activeTabId: 'main',
     output: [],
@@ -121,7 +115,7 @@ export const useStore = create<RuntsState>()(persist((set, get) => ({
     addTab: () => {
         const newId = Math.random().toString(36).substring(7);
         set(state => ({
-            tabs: [...state.tabs, { id: newId, title: 'Untitled', content: '' }],
+            tabs: [...state.tabs, { id: newId, title: 'Untitled.ts', content: '' }],
             activeTabId: newId
         }));
     },
@@ -144,11 +138,10 @@ export const useStore = create<RuntsState>()(persist((set, get) => ({
             tabs: state.tabs.map(t => t.id === id ? { ...t, content } : t)
         }));
 
-        const { autoRunEnabled, runCode } = get();
-        if (autoRunEnabled) {
+        if (get().autoRunEnabled) {
             if (debounceTimer) clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
-                runCode();
+                get().runCode();
             }, 1500);
         }
     },
@@ -160,46 +153,32 @@ export const useStore = create<RuntsState>()(persist((set, get) => ({
     },
 
     toggleAutoRun: () => set(state => ({ autoRunEnabled: !state.autoRunEnabled })),
-
     toggleMatchLines: () => set(state => ({ matchLines: !state.matchLines })),
 
-    appendLogs: (logs) => set(state => ({
-        output: [...state.output, ...logs]
+    appendLogs: (newLogs) => set(state => ({
+        output: [...state.output, ...newLogs]
     })),
 
-    appendOutput: (content, line) => set(state => ({
-        output: [...state.output, {
+    appendOutput: (content, line) => {
+        get().appendLogs([{
             id: Math.random().toString(36),
             content,
             line,
             timestamp: Date.now()
-        }]
-    })),
+        }]);
+    },
 
     clearOutput: () => set({ output: [] }),
 
-    stopCode: () => {
+    runCode: async () => {
+        const { tabs, activeTabId, envVars, appendLogs, matchLines } = get();
         if (activeProcess) {
             activeProcess.kill();
-            activeProcess = null;
         }
-        set({ isRunning: false });
-    },
 
-    runCode: async () => {
-        const { isBooted, tabs, activeTabId, appendLogs, envVars, matchLines } = get();
-        if (!isBooted) return;
-
-        // Clear any pending auto-run
         if (debounceTimer) {
             clearTimeout(debounceTimer);
             debounceTimer = null;
-        }
-
-        // Stop previous process if exists
-        if (activeProcess) {
-            activeProcess.kill();
-            activeProcess = null;
         }
 
         set({ isRunning: true, output: [] });
@@ -209,11 +188,8 @@ export const useStore = create<RuntsState>()(persist((set, get) => ({
             if (!activeTab) return;
 
             const instance = await getWebContainerInstance();
-
-            // Only transform code if matchLines is enabled to save performance
             const codeToRun = matchLines ? transformCode(activeTab.content) : activeTab.content;
 
-            // Transpile
             const transpiled = ts.transpileModule(codeToRun, {
                 compilerOptions: {
                     module: ts.ModuleKind.CommonJS,
@@ -229,11 +205,7 @@ export const useStore = create<RuntsState>()(persist((set, get) => ({
             });
 
             activeProcess = process;
-
-            // Stream buffering for robust line handling
             let streamBuffer = '';
-
-            // Log buffer for batching UI updates
             let logBuffer: LogEntry[] = [];
 
             const flushFilter = () => {
@@ -243,7 +215,6 @@ export const useStore = create<RuntsState>()(persist((set, get) => ({
                 }
             };
 
-            // Faster interval for responsiveness
             const flushInterval = setInterval(flushFilter, 50);
 
             const processLine = (lineStr: string) => {
@@ -279,23 +250,18 @@ export const useStore = create<RuntsState>()(persist((set, get) => ({
                 write(data) {
                     streamBuffer += data;
                     const lines = streamBuffer.split('\n');
-
-                    // The last part is either an incomplete line or empty (if data ended with \n)
-                    // We save it back to the buffer for the next chunk
                     streamBuffer = lines.pop() || '';
 
                     lines.forEach(lineStr => {
                         processLine(lineStr);
                     });
 
-                    // Instant flush if buffer gets too big
                     if (logBuffer.length > 50) flushFilter();
                 }
             }));
 
             await process.exit;
 
-            // Process any remaining buffer
             if (streamBuffer) {
                 processLine(streamBuffer);
             }
@@ -305,6 +271,14 @@ export const useStore = create<RuntsState>()(persist((set, get) => ({
         } catch (error: any) {
             get().appendLogs([{ id: 'err', content: `[Error] ${error.message}`, timestamp: Date.now() }]);
         } finally {
+            activeProcess = null;
+            set({ isRunning: false });
+        }
+    },
+
+    stopCode: () => {
+        if (activeProcess) {
+            activeProcess.kill();
             activeProcess = null;
             set({ isRunning: false });
         }
@@ -352,11 +326,10 @@ export const useStore = create<RuntsState>()(persist((set, get) => ({
             const raw = await instance.fs.readFile('package.json', 'utf-8');
             const json = JSON.parse(raw);
             set({ dependencies: json.dependencies || {} });
-        } catch (e) {
-            // console.error('Failed to refresh dependencies', e);
-        }
+        } catch (e) { }
     },
-    deserialize: (newState) => set({ ...newState })
+
+    deserialize: (newState) => set(state => ({ ...state, ...newState }))
 }), {
     name: 'runts-storage',
     partialize: (state) => ({

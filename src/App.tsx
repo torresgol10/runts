@@ -26,7 +26,8 @@ function App() {
         renameTab,
         theme,
         setTheme,
-        deserialize
+        deserialize,
+        matchLines
     } = useStore();
 
     useEffect(() => {
@@ -120,7 +121,7 @@ function App() {
                         <Console
                             logs={output}
                             onClear={clearOutput}
-                            matchLines={useStore(s => s.matchLines)}
+                            matchLines={matchLines}
                         />
                     </div>
                 </div>

@@ -16,7 +16,9 @@ export default defineConfig({
         tailwindcss(),
         VitePWA({
             registerType: 'autoUpdate',
-            includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+            workbox: {
+                maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
+            },
             manifest: {
                 name: 'RunTS - TypeScript Playground',
                 short_name: 'RunTS',
@@ -47,6 +49,12 @@ export default defineConfig({
         })
     ],
     server: {
+        headers: {
+            'Cross-Origin-Embedder-Policy': 'require-corp',
+            'Cross-Origin-Opener-Policy': 'same-origin',
+        },
+    },
+    preview: {
         headers: {
             'Cross-Origin-Embedder-Policy': 'require-corp',
             'Cross-Origin-Opener-Policy': 'same-origin',
