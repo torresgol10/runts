@@ -106,6 +106,10 @@ export const useStore = create<RuntsState>()(persist((set, get) => ({
             });
             set({ isBooted: true });
             get().refreshDependencies();
+
+            if (get().autoRunEnabled) {
+                get().runCode();
+            }
         } catch (error) {
             console.error('Failed to boot WebContainer', error);
             set({ output: [{ id: 'err', content: '[System] Failed to boot WebContainer.', timestamp: Date.now() }] });
