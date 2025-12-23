@@ -76,7 +76,7 @@ export const Sidebar = ({
             <button
                 onClick={onRun}
                 disabled={isRunning}
-                className={`p-3 rounded-xl transition-all ${isRunning
+                className={`p-3 rounded-xl transition-all cursor-pointer ${isRunning
                     ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
                     : 'bg-green-600 hover:bg-green-500 text-white shadow-lg shadow-green-900/20'
                     }`}
@@ -87,7 +87,7 @@ export const Sidebar = ({
 
             <button
                 onClick={onToggleAutoRun}
-                className={`p-3 rounded-xl transition-all ${autoRunEnabled
+                className={`p-3 rounded-xl transition-all cursor-pointer ${autoRunEnabled
                     ? 'text-accent bg-accent/10'
                     : 'text-gray-500 hover:text-gray-300'
                     }`}
@@ -102,7 +102,7 @@ export const Sidebar = ({
             <div className="relative">
                 <button
                     onClick={() => togglePopover('snippets')}
-                    className={`p-3 rounded-xl transition-colors ${activePopover === 'snippets' ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/10'}`}
+                    className={`p-3 rounded-xl transition-colors cursor-pointer ${activePopover === 'snippets' ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/10'}`}
                     title="Snippets"
                 >
                     <Scissors size={20} />
@@ -118,7 +118,7 @@ export const Sidebar = ({
             <div className="relative">
                 <button
                     onClick={() => togglePopover('package')}
-                    className={`p-3 rounded-xl transition-colors ${activePopover === 'package' ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/10'}`}
+                    className={`p-3 rounded-xl transition-colors cursor-pointer ${activePopover === 'package' ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/10'}`}
                     title="Packages"
                 >
                     <Package size={20} />
@@ -134,7 +134,7 @@ export const Sidebar = ({
             <div className="relative">
                 <button
                     onClick={() => togglePopover('env')}
-                    className={`p-3 rounded-xl transition-colors ${activePopover === 'env' ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/10'}`}
+                    className={`p-3 rounded-xl transition-colors cursor-pointer ${activePopover === 'env' ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/10'}`}
                     title="Environment Variables"
                 >
                     <Database size={20} />
@@ -151,7 +151,7 @@ export const Sidebar = ({
             {/* Format */}
             <button
                 onClick={handleFormat}
-                className="p-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+                className="p-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                 title="Format Code (Prettier)"
             >
                 <AlignLeft size={20} />
@@ -160,7 +160,7 @@ export const Sidebar = ({
             {/* Save / Export */}
             <button
                 onClick={handleSave}
-                className="p-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+                className="p-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                 title="Export Project (ZIP)"
             >
                 <Save size={20} />
@@ -173,7 +173,7 @@ export const Sidebar = ({
             <div className="mt-auto relative">
                 <button
                     onClick={() => togglePopover('settings')}
-                    className={`p-3 rounded-xl transition-colors ${activePopover === 'settings' ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/10'}`}
+                    className={`p-3 rounded-xl transition-colors cursor-pointer ${activePopover === 'settings' ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/10'}`}
                     title="Settings"
                 >
                     <Settings size={20} />
