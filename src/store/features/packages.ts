@@ -1,8 +1,8 @@
 import { StateCreator } from 'zustand';
-import { RuntsState } from '../types';
+import { RuntsState, PackagesSlice } from '../types';
 import { webContainerService } from '../../services/WebContainerService';
 
-export const createPackagesFeature: StateCreator<RuntsState> = (set, get) => ({
+export const createPackagesFeature: StateCreator<RuntsState, [], [], PackagesSlice> = (set, get) => ({
     dependencies: {},
 
     installPackage: async (pkg: string) => {

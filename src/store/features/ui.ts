@@ -1,7 +1,7 @@
 import { StateCreator } from 'zustand';
-import { RuntsState } from '../types';
+import { RuntsState, UISlice } from '../types';
 
-export const createUIFeature: StateCreator<RuntsState> = (set) => ({
+export const createUIFeature: StateCreator<RuntsState, [], [], UISlice> = (set) => ({
     theme: 'runts-dark',
     envVars: {},
     snippets: [

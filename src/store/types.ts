@@ -20,8 +20,7 @@ export interface Snippet {
     code: string;
 }
 
-export interface RuntsState {
-    // Tabs Feature
+export interface TabsSlice {
     tabs: Tab[];
     activeTabId: string;
     addTab: () => void;
@@ -29,8 +28,9 @@ export interface RuntsState {
     setActiveTab: (id: string) => void;
     updateTabContent: (id: string, content: string) => void;
     renameTab: (id: string, title: string) => void;
+}
 
-    // Execution Feature
+export interface ExecutionSlice {
     isBooted: boolean;
     isRunning: boolean;
     output: LogEntry[];
@@ -44,14 +44,16 @@ export interface RuntsState {
     clearOutput: () => void;
     toggleAutoRun: () => void;
     toggleMatchLines: () => void;
+}
 
-    // Packages Feature
+export interface PackagesSlice {
     dependencies: Record<string, string>;
     installPackage: (pkg: string) => Promise<void>;
     uninstallPackage: (pkg: string) => Promise<void>;
     refreshDependencies: () => Promise<void>;
+}
 
-    // UI Feature
+export interface UISlice {
     theme: ThemeId;
     envVars: Record<string, string>;
     snippets: Snippet[];
@@ -62,3 +64,5 @@ export interface RuntsState {
     removeSnippet: (id: string) => void;
     deserialize: (state: Partial<RuntsState>) => void;
 }
+
+export interface RuntsState extends TabsSlice, ExecutionSlice, PackagesSlice, UISlice { }

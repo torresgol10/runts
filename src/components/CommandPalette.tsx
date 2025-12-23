@@ -7,8 +7,6 @@ import {
     Moon,
     Sun,
     Monitor,
-    AlignLeft,
-    Package,
     Search
 } from 'lucide-react';
 
@@ -18,9 +16,6 @@ export const CommandPalette = () => {
         runCode,
         clearOutput,
         setTheme,
-        activeTabId,
-        tabs,
-        updateTabContent,
         theme
     } = useStore();
 

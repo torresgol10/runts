@@ -1,7 +1,7 @@
 import { StateCreator } from 'zustand';
-import { RuntsState } from '../types';
+import { RuntsState, TabsSlice } from '../types';
 
-export const createTabsFeature: StateCreator<RuntsState> = (set, get) => ({
+export const createTabsFeature: StateCreator<RuntsState, [], [], TabsSlice> = (set, get) => ({
     tabs: [{
         id: 'main',
         title: 'Main.ts',

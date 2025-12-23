@@ -1,8 +1,8 @@
 import { StateCreator } from 'zustand';
-import { RuntsState } from '../types';
+import { RuntsState, ExecutionSlice } from '../types';
 import { webContainerService } from '../../services/WebContainerService';
 
-export const createExecutionFeature: StateCreator<RuntsState> = (set, get) => ({
+export const createExecutionFeature: StateCreator<RuntsState, [], [], ExecutionSlice> = (set, get) => ({
     isBooted: false,
     isRunning: false,
     output: [],
@@ -17,7 +17,7 @@ export const createExecutionFeature: StateCreator<RuntsState> = (set, get) => ({
 
             // Restore dependencies
             if (Object.keys(get().dependencies).length > 0) {
-                const { appendOutput, refreshDependencies } = get();
+                const { appendOutput } = get();
                 appendOutput('[System] Restoring dependencies...');
                 await webContainerService.restoreDependencies((data) => appendOutput(data));
                 appendOutput('[System] Dependencies restored.');
@@ -59,7 +59,7 @@ export const createExecutionFeature: StateCreator<RuntsState> = (set, get) => ({
 
     runCode: async () => {
         const { tabs, activeTabId, envVars, matchLines, appendLogs } = get();
-        
+
         webContainerService.kill(); // Ensure previous stopped
         set({ isRunning: true, output: [] });
 
@@ -72,7 +72,7 @@ export const createExecutionFeature: StateCreator<RuntsState> = (set, get) => ({
         // Buffer for logs if needed, or direct dispatch?
         // Direct dispatch is fine for now, Zustand is fast enough usually.
         // Or we could buffer inside service, but for now direct callback.
-        
+
         await webContainerService.runCode(
             activeTab.content,
             envVars,
