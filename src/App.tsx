@@ -4,6 +4,7 @@ import { CodeEditor } from './components/Editor';
 import { Console } from './components/Console';
 import { Tabs } from './components/Tabs';
 import { Sidebar } from './components/Sidebar';
+import { CommandPalette } from './components/CommandPalette';
 import lzString from 'lz-string';
 
 function App() {
@@ -78,6 +79,7 @@ function App() {
 
     return (
         <div className="flex h-screen w-full bg-background text-white overflow-hidden">
+            <CommandPalette />
             <Sidebar
                 onInstall={installPackage}
                 onRun={runCode}

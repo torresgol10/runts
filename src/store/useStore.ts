@@ -51,6 +51,7 @@ interface RuntsState {
     appendOutput: (content: string, line?: number) => void;
     clearOutput: () => void;
     installPackage: (pkg: string) => Promise<void>;
+    uninstallPackage: (pkg: string) => Promise<void>;
     setTheme: (theme: ThemeId) => void;
     addEnvVar: (key: string, value: string) => void;
     removeEnvVar: (key: string) => void;
@@ -87,13 +88,15 @@ export const useStore = create<RuntsState>()(persist((set, get) => ({
         if (get().isBooted) return;
         try {
             const instance = await getWebContainerInstance();
+            const { dependencies } = get();
+
             await instance.mount({
                 'package.json': {
                     file: {
                         contents: JSON.stringify({
                             name: 'runts-project',
                             type: 'module',
-                            dependencies: {},
+                            dependencies: dependencies,
                             scripts: { start: 'node index.js' }
                         })
                     }
@@ -105,6 +108,25 @@ export const useStore = create<RuntsState>()(persist((set, get) => ({
                 }
             });
             set({ isBooted: true });
+
+            // Re-install dependencies if there are any
+            if (Object.keys(dependencies).length > 0) {
+                const { appendOutput } = get();
+                appendOutput('[System] Restoring dependencies...');
+                try {
+                    const installProcess = await instance.spawn('npm', ['install']);
+                    installProcess.output.pipeTo(new WritableStream({
+                        write(data) {
+                            appendOutput(data);
+                        }
+                    }));
+                    await installProcess.exit;
+                    appendOutput('[System] Dependencies restored.');
+                } catch (e) {
+                    appendOutput(`[System] Failed to restore dependencies: ${e}`);
+                }
+            }
+
             get().refreshDependencies();
 
             if (get().autoRunEnabled) {
@@ -307,6 +329,36 @@ export const useStore = create<RuntsState>()(persist((set, get) => ({
         }
     },
 
+    uninstallPackage: async (pkg: string) => {
+        const { appendOutput, refreshDependencies } = get();
+
+        // Optimistic UI update: Remove immediately from state
+        set(state => {
+            const newDeps = { ...state.dependencies };
+            delete newDeps[pkg];
+            return { dependencies: newDeps };
+        });
+
+        appendOutput(`[System] Uninstalling ${pkg}...`);
+        try {
+            const instance = await getWebContainerInstance();
+            const process = await instance.spawn('npm', ['uninstall', pkg]);
+            process.output.pipeTo(new WritableStream({
+                write(data) {
+                    appendOutput(data);
+                }
+            }));
+            await process.exit;
+            appendOutput(`[System] ${pkg} uninstalled.`);
+
+            await refreshDependencies();
+        } catch (error: any) {
+            appendOutput(`[System] Failed to uninstall ${pkg}: ${error.message}`);
+            // If failed, we should technically restore it, but simple refresh will sort it out eventually
+            get().refreshDependencies();
+        }
+    },
+
     setTheme: (theme) => set({ theme }),
 
     addEnvVar: (key, value) => set(state => ({ envVars: { ...state.envVars, [key]: value } })),
@@ -343,6 +395,7 @@ export const useStore = create<RuntsState>()(persist((set, get) => ({
         autoRunEnabled: state.autoRunEnabled,
         matchLines: state.matchLines,
         envVars: state.envVars,
-        snippets: state.snippets
+        snippets: state.snippets,
+        dependencies: state.dependencies
     })
 }));
