@@ -117,7 +117,7 @@ function App() {
                         </div>
                     </div>
 
-                    <div className="h-1/2 md:h-full md:w-[40%] min-w-[300px] flex flex-col min-h-0">
+                    <div className="h-1/2 md:h-full md:w-[40%] md:min-w-[300px] flex flex-col min-h-0">
                         <Console
                             logs={output}
                             onClear={clearOutput}
