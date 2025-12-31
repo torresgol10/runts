@@ -107,23 +107,23 @@ export const Console = ({ logs, onClear, matchLines }: ConsoleProps) => {
     };
 
     return (
-        <div className="flex flex-col h-full bg-secondary text-gray-300 font-mono text-sm border-t border-gray-700">
-            <div className="flex items-center justify-between px-4 py-2 bg-[#18181b] border-b border-gray-700">
+        <div className="flex flex-col h-full bg-black/40 backdrop-blur text-gray-300 font-mono text-sm border-t border-white/5">
+            <div className="flex items-center justify-between px-4 py-2 bg-white/5 border-b border-white/5">
                 <div className="flex items-center gap-2">
-                    <Terminal size={14} />
-                    <span className="font-semibold uppercase text-xs tracking-wider">
+                    <Terminal size={14} className="text-accent" />
+                    <span className="font-semibold uppercase text-[10px] tracking-widest text-text-secondary">
                         Console {matchLines ? '(Aligned)' : ''}
                     </span>
                 </div>
                 <button
                     onClick={onClear}
-                    className="p-1 hover:bg-white/10 rounded transition-colors"
+                    className="p-1.5 hover:bg-white/10 rounded-md transition-colors text-text-secondary hover:text-white"
                     title="Clear Console"
                 >
                     <Trash2 size={14} />
                 </button>
             </div>
-            <div className="flex-1 overflow-auto p-4 space-y-0 relative">
+            <div className="flex-1 overflow-auto p-4 space-y-0 relative scroll-smooth scheme-dark">
                 {renderContent()}
                 <div ref={endRef} />
             </div>

@@ -45,7 +45,7 @@ export const CodeEditor = ({ value, onChange, theme }: CodeEditorProps) => {
                 monaco.editor.defineTheme(t.id, {
                     base: t.monacoTheme as 'vs' | 'vs-dark' | 'hc-black',
                     inherit: true,
-                    rules: [],
+                    rules: t.rules || [],
                     colors: t.monacoColors,
                 });
             });

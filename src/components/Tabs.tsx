@@ -42,17 +42,21 @@ export const Tabs = ({ tabs, activeTabId, onTabClick, onTabClose, onNewTab, onRe
     };
 
     return (
-        <div className="flex items-center bg-[#0f0f11] border-b border-gray-800 overflow-x-auto">
+        <div className="flex items-center gap-1.5 px-2 pt-2 pb-0 overflow-x-auto no-scrollbar items-end h-[42px]">
             {tabs.map(tab => (
                 <div
                     key={tab.id}
                     onClick={() => onTabClick(tab.id)}
                     className={clsx(
-                        "group flex items-center gap-2 px-4 py-2 border-r border-gray-800 cursor-pointer select-none min-w-[120px] justify-between hover:bg-[#1e1e24] transition-colors",
-                        activeTabId === tab.id ? "bg-[#1e1e24] text-white" : "text-gray-500"
+                        "group flex items-center gap-2 px-4 py-1.5 cursor-pointer select-none min-w-[120px] max-w-[200px] justify-between transition-all duration-200 border-t border-l border-r rounded-t-lg relative",
+                        activeTabId === tab.id
+                            ? "bg-[#0e0e11]/90 text-white border-white/10 z-10 shadow-[0_-5px_15px_rgba(0,0,0,0.3)] h-full mb-0"
+                            : "bg-white/5 text-text-muted border-transparent hover:bg-white/10 h-[calc(100%-4px)] mb-0 hover:text-gray-300"
                     )}
                     onDoubleClick={(e) => startEditing(tab.id, tab.title, e)}
                 >
+                    {activeTabId === tab.id && <div className="absolute top-0 left-0 right-0 h-[2px] bg-accent shadow-[0_0_10px_rgba(139,92,246,0.6)] rounded-t-full" />}
+
                     {editingId === tab.id ? (
                         <input
                             ref={inputRef}
@@ -61,15 +65,18 @@ export const Tabs = ({ tabs, activeTabId, onTabClick, onTabClose, onNewTab, onRe
                             onBlur={commitEdit}
                             onKeyDown={handleKeyDown}
                             onClick={(e) => e.stopPropagation()}
-                            className="bg-black/50 text-white text-sm px-1 rounded border border-accent w-20 outline-none"
+                            className="bg-black/50 text-white text-xs px-1.5 py-0.5 rounded border border-accent/50 w-24 outline-none focus:border-accent font-mono"
                         />
                     ) : (
-                        <span className="truncate text-sm">{tab.title}</span>
+                        <span className="truncate text-xs font-medium tracking-wide">{tab.title}</span>
                     )}
 
                     <button
                         onClick={(e) => onTabClose(tab.id, e)}
-                        className="opacity-0 group-hover:opacity-100 hover:bg-white/20 rounded p-0.5 transition-all"
+                        className={clsx(
+                            "rounded-full p-0.5 transition-all opacity-0 group-hover:opacity-100",
+                            activeTabId === tab.id ? "hover:bg-white/20 text-gray-400 hover:text-white" : "hover:bg-white/10 text-gray-600 hover:text-gray-300"
+                        )}
                     >
                         <X size={12} />
                     </button>
@@ -77,7 +84,7 @@ export const Tabs = ({ tabs, activeTabId, onTabClick, onTabClose, onNewTab, onRe
             ))}
             <button
                 onClick={onNewTab}
-                className="p-1 hover:bg-white/10 rounded transition-colors ml-1 text-gray-400 hover:text-white"
+                className="p-1.5 hover:bg-white/10 rounded-md transition-colors ml-1 text-gray-500 hover:text-white mb-1"
                 title="New Tab"
             >
                 <Plus size={16} />

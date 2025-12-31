@@ -78,48 +78,62 @@ export function Playground() {
     }
 
     return (
-        <div className="flex h-screen w-full bg-background text-white overflow-hidden">
+        <div className="flex h-screen w-full bg-transparent text-white overflow-hidden p-3 gap-3">
             <CommandPalette />
-            <Sidebar
-                onInstall={installPackage}
-                onRun={runCode}
-                isRunning={isRunning}
-                autoRunEnabled={autoRunEnabled}
-                onToggleAutoRun={toggleAutoRun}
-                currentTheme={theme}
-                onThemeChange={setTheme}
-            />
 
-            <div className="flex-1 flex flex-col h-full min-w-0">
-                <Tabs
-                    tabs={tabs}
-                    activeTabId={activeTabId}
-                    onTabClick={setActiveTab}
-                    onTabClose={(id, e) => { e.stopPropagation(); closeTab(id); }}
-                    onNewTab={addTab}
-                    onRenameTab={renameTab}
+            {/* Sidebar Floating Panel */}
+            <div className="h-full shrink-0 flex flex-col z-50">
+                <Sidebar
+                    onInstall={installPackage}
+                    onRun={runCode}
+                    isRunning={isRunning}
+                    autoRunEnabled={autoRunEnabled}
+                    onToggleAutoRun={toggleAutoRun}
+                    currentTheme={theme}
+                    onThemeChange={setTheme}
                 />
+            </div>
 
-                <div className="flex-1 flex flex-col md:flex-row min-h-0">
-                    <div className="flex-1 h-1/2 md:h-full min-h-0 border-b md:border-b-0 md:border-r border-gray-800">
-                        {/* Editor Container */}
+            {/* Main Content */}
+            <div className="flex-1 flex flex-col h-full min-w-0 gap-3">
+                {/* Tabs Bar */}
+                <div className="shrink-0 pt-1">
+                    <Tabs
+                        tabs={tabs}
+                        activeTabId={activeTabId}
+                        onTabClick={setActiveTab}
+                        onTabClose={(id, e) => { e.stopPropagation(); closeTab(id); }}
+                        onNewTab={addTab}
+                        onRenameTab={renameTab}
+                    />
+                </div>
+
+                <div className="flex-1 flex flex-col md:flex-row min-h-0 gap-3">
+                    {/* Editor Panel */}
+                    <div className="flex-1 h-1/2 md:h-full min-h-0 glass-panel rounded-2xl overflow-hidden shadow-2xl relative">
+                        <div className="absolute inset-0 bg-[#09090b]/50 backdrop-blur-sm -z-10" />
+
                         <div className="w-full h-full">
                             {activeTab && (
                                 <CodeEditor
                                     value={activeTab.content}
-                                    onChange={(val) => updateTabContent(activeTab.id, val || '')}
+                                    onChange={(val) => updateTabContent(activeTab!.id, val || '')}
                                     theme={theme}
                                 />
                             )}
                             {!activeTab && (
-                                <div className="flex items-center justify-center h-full text-gray-500">
-                                    No open tabs
+                                <div className="flex flex-col items-center justify-center h-full text-gray-500 gap-4">
+                                    <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center">
+                                        <div className="w-8 h-8 rounded-full border-2 border-white/10 border-t-accent animate-spin" />
+                                    </div>
+                                    <p className="font-mono text-sm opacity-50">Select or create a file</p>
                                 </div>
                             )}
                         </div>
                     </div>
 
-                    <div className="h-1/2 md:h-full md:w-[40%] md:min-w-[300px] flex flex-col min-h-0">
+                    {/* Console Panel */}
+                    <div className="h-1/2 md:h-full md:w-[40%] md:min-w-[300px] flex flex-col min-h-0 glass-panel rounded-2xl overflow-hidden shadow-2xl">
                         <Console
                             logs={output}
                             onClear={clearOutput}

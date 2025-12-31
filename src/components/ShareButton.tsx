@@ -33,9 +33,9 @@ export const ShareButton = () => {
     return (
         <button
             onClick={handleShare}
-            className={`p-3 rounded-xl transition-all cursor-pointer ${copied
-                ? 'bg-green-600 text-white'
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
+            className={`p-2 rounded-2xl transition-all cursor-pointer ${copied
+                ? 'bg-green-600 text-white shadow-[0_0_15px_rgba(22,163,74,0.4)]'
+                : 'text-text-secondary bg-blue-500/5 hover:bg-blue-500/20 hover:text-white disabled:hover:bg-transparent border border-white/5'
                 }`}
             title={copied ? "Copied!" : "Share Project URL"}
         >
