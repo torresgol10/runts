@@ -23,7 +23,7 @@ export default defineConfig({
             manifest: {
                 name: 'RunTS - TypeScript Playground',
                 short_name: 'RunTS',
-                description: 'A secure, local-first TypeScript playground powered by WebContainers.',
+                description: 'A secure, local-first TypeScript playground running fully in your browser.',
                 theme_color: '#3178C6',
                 background_color: '#3178C6',
                 display: 'standalone',
@@ -61,6 +61,14 @@ export default defineConfig({
         headers: {
             'Cross-Origin-Embedder-Policy': 'require-corp',
             'Cross-Origin-Opener-Policy': 'same-origin',
+        },
+    },
+    build: {
+        rollupOptions: {
+            input: {
+                main: 'index.html',
+                playground: 'playground/index.html',
+            },
         },
     },
 });
