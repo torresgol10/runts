@@ -227,56 +227,131 @@
     </section>
 
     <!-- Features -->
-    <section id="features" class="py-24 bg-gray-900/30 border-y border-gray-900">
-      <div class="container mx-auto px-6">
-        <div class="text-center mb-16">
-          <h2 class="text-3xl font-bold mb-4">Built for Modern Development</h2>
-          <p class="text-gray-400">Everything you need to experience TypeScript, right in your browser.</p>
+    <!-- Features -->
+    <section id="features" class="container mx-auto px-6 py-24">
+      <div class="text-center mb-16">
+        <h2
+          class="text-3xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-500">
+          Everything you need to build
+        </h2>
+        <p class="text-gray-400 max-w-2xl mx-auto text-lg">
+          A complete development environment in your browser. No setup required.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Feature 1: NPM Support -->
+        <div class="glass-panel p-8 rounded-2xl group hover:border-[#3b82f6]/30 transition-all duration-300">
+          <div
+            class="w-12 h-12 rounded-xl bg-[#3b82f6]/10 flex items-center justify-center mb-6 text-[#3b82f6] group-hover:scale-110 transition-transform duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+              <line x1="12" y1="22.08" x2="12" y2="12" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold mb-3 text-white">Smart NPM Support</h3>
+          <p class="text-gray-400 leading-relaxed">
+            Install any package directly in the browser. Just <code>import</code> it, and we handle the magic resolution
+            and installation.
+          </p>
         </div>
 
-        <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          <div class="p-6 rounded-2xl bg-gray-900 border border-gray-800 hover:border-gray-700 transition-colors">
-            <div class="w-12 h-12 bg-gray-950 rounded-xl flex items-center justify-center mb-4 border border-gray-800">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                class="text-accent">
-                <polyline points="4 17 10 11 4 5" />
-                <line x1="12" y1="19" x2="20" y2="19" />
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold mb-2 text-white">Node.js Runtime</h3>
-            <p class="text-gray-400 leading-relaxed">
-              Full Node.js environment running directly in your browser. Secure, fast, and no server setup required.
-            </p>
+        <!-- Feature 2: Snippet Manager -->
+        <div class="glass-panel p-8 rounded-2xl group hover:border-purple-500/30 transition-all duration-300">
+          <div
+            class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-6 text-purple-500 group-hover:scale-110 transition-transform duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4" />
+              <polyline points="14 2" />
+              <path d="M18 9l-6 6-4-4" />
+            </svg>
           </div>
-          <div class="p-6 rounded-2xl bg-gray-900 border border-gray-800 hover:border-gray-700 transition-colors">
-            <div class="w-12 h-12 bg-gray-950 rounded-xl flex items-center justify-center mb-4 border border-gray-800">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                class="text-yellow-400">
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold mb-2 text-white">Instant Preview</h3>
-            <p class="text-gray-400 leading-relaxed">
-              See your changes instantly. Hot Module Replacement (HMR) built-in for a seamless feedback loop.
-            </p>
-          </div>
-          <div class="p-6 rounded-2xl bg-gray-900 border border-gray-800 hover:border-gray-700 transition-colors">
-            <div class="w-12 h-12 bg-gray-950 rounded-xl flex items-center justify-center mb-4 border border-gray-800">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                class="text-green-400">
-                <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold mb-2 text-white">Secure & Private</h3>
-            <p class="text-gray-400 leading-relaxed">
-              Code never leaves your browser unless you choose to share it. Ideal for confidential experiments.
-            </p>
-          </div>
+          <h3 class="text-xl font-bold mb-3 text-white">Snippet Manager</h3>
+          <p class="text-gray-400 leading-relaxed">
+            Save your favorite code patterns and reuse them instantly. Copy to clipboard with one click or insert
+            directly into your code.
+          </p>
         </div>
+
+        <!-- Feature 3: Environment Variables -->
+        <div class="glass-panel p-8 rounded-2xl group hover:border-yellow-500/30 transition-all duration-300">
+          <div
+            class="w-12 h-12 rounded-xl bg-yellow-500/10 flex items-center justify-center mb-6 text-yellow-500 group-hover:scale-110 transition-transform duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold mb-3 text-white">Secure Env Vars</h3>
+          <p class="text-gray-400 leading-relaxed">
+            Manage API keys and secrets securely. Define environment variables that are accessible in your code via
+            <code>process.env</code>.
+          </p>
+        </div>
+
+        <!-- Feature 4: VS Code Experience -->
+        <div class="glass-panel p-8 rounded-2xl group hover:border-blue-400/30 transition-all duration-300">
+          <div
+            class="w-12 h-12 rounded-xl bg-blue-400/10 flex items-center justify-center mb-6 text-blue-400 group-hover:scale-110 transition-transform duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m15 12-8.5 8.5c-.83.83-2.17.83-3 0 0 0 0 0 0 0a2.12 2.12 0 0 1 0-3L12 9" />
+              <path d="M17.64 15 22 10.64" />
+              <path d="m20.91 11.26-1.41-1.41a2.12 2.12 0 0 1 0-3L22 4.36" />
+              <path d="m18.5 8.5-4.5 4.5" />
+              <path d="M6.36 17.64a2.12 2.12 0 0 1 0-3L9 12" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold mb-3 text-white">VS Code Experience</h3>
+          <p class="text-gray-400 leading-relaxed">
+            Built on Monaco Editor. Enjoy your favorite shortcuts, command palette, multi-tab editing, and IntelliSense.
+          </p>
+        </div>
+
+        <!-- Feature 5: Themes -->
+        <div class="glass-panel p-8 rounded-2xl group hover:border-pink-500/30 transition-all duration-300">
+          <div
+            class="w-12 h-12 rounded-xl bg-pink-500/10 flex items-center justify-center mb-6 text-pink-500 group-hover:scale-110 transition-transform duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="13.5" cy="6.5" r=".5" />
+              <circle cx="17.5" cy="10.5" r=".5" />
+              <circle cx="8.5" cy="7.5" r=".5" />
+              <circle cx="6.5" cy="12.5" r=".5" />
+              <path
+                d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold mb-3 text-white">Multiple Themes</h3>
+          <p class="text-gray-400 leading-relaxed">
+            Customize your workspace with premium themes like Dracula, Monokai, Nord, Solarized, and GitHub Light/Dark.
+          </p>
+        </div>
+
+        <!-- Feature 6: TypeScript -->
+        <div class="glass-panel p-8 rounded-2xl group hover:border-[#3178c6]/30 transition-all duration-300">
+          <div
+            class="w-12 h-12 rounded-xl bg-[#3178c6]/10 flex items-center justify-center mb-6 text-[#3178c6] group-hover:scale-110 transition-transform duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M16.5 9.4l-9-5.19M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+              <polyline points="3.29 7 12 12 20.71 7" />
+              <line x1="12" y1="22" x2="12" y2="12" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold mb-3 text-white">Native TypeScript</h3>
+          <p class="text-gray-400 leading-relaxed">
+            First-class TypeScript support with zero configuration. Type-checking, auto-completion, and immediate
+            transpilation.
+          </p>
+        </div>
+
       </div>
     </section>
 
