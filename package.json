@@ -23,6 +23,7 @@
     "jszip": "^3.10.1",
     "lucide-react": "^0.562.0",
     "lz-string": "^1.5.0",
+    "posthog-js": "^1.311.0",
     "prettier": "^3.7.4",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
