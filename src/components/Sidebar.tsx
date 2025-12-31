@@ -1,6 +1,6 @@
 import { Logo } from './Logo';
 import { Package, Play, Settings, Zap, Database, Save, Scissors, AlignLeft } from 'lucide-react';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useStore } from '../store/useStore';
 import { themes, ThemeId } from '../utils/themes';
 import { PackageManager } from './PackageManager';
@@ -56,6 +56,29 @@ export const Sidebar = ({
     // Given the dynamic nature, we'll use a simple approach: render them fixed or absolute to sidebar
     // Since sidebar has relative, absolute children align to it. 
     // WE WILL RENDER THEM OUTSIDE THE SCROLL CONTAINER to avoid clipping.
+
+    // Handle click outside to close popovers
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            const target = event.target as Node;
+
+            // If the target is no longer in the document (was unmounted by the click event), 
+            // we assume it was part of the UI and ignore it.
+            if (!document.contains(target)) return;
+
+            if (sidebarRef.current && !sidebarRef.current.contains(target)) {
+                setActivePopover('none');
+            }
+        };
+
+        if (activePopover !== 'none') {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [activePopover]);
 
     return (
         <div

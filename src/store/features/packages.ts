@@ -14,6 +14,21 @@ export const createPackagesFeature: StateCreator<RuntsState, [], [], PackagesSli
             await webContainerService.install(pkg, (data) => appendOutput(data));
             appendOutput(`[System] ${pkg} installed.`);
             await refreshDependencies();
+
+            // Auto-install types if not already installing a type package
+            if (!pkg.startsWith('@types/')) {
+                const typePkg = `@types/${pkg}`;
+                appendOutput(`[System] Attempting to install ${typePkg}...`);
+                try {
+                    await webContainerService.install(typePkg, (data) => appendOutput(data));
+                    appendOutput(`[System] ${typePkg} installed.`);
+                    await refreshDependencies();
+                } catch (e) {
+                    // Silently fail if types dependnecy doesn't exist or installation fails
+                    // Most packages include types now, so this is just a best-effort helper
+                    appendOutput(`[System] No separate types found for ${pkg} (or built-in).`);
+                }
+            }
         } catch (error: any) {
             appendOutput(`[System] Failed to install ${pkg}: ${error.message}`);
         }
