@@ -16,7 +16,7 @@ export const CodeEditor = ({ value, onChange, theme }: CodeEditorProps) => {
     const monaco = useMonaco();
     const { output, matchLines, dependencies } = useStore();
     const editorRef = useRef<any>(null);
-    const decorationsRef = useRef<string[]>([]);
+    const decorationsCollectionRef = useRef<any>(null);
     const ataRef = useRef<ReturnType<typeof createTypeFetcher> | null>(null);
 
     // Initialize ATA (Auto Type Acquisition)
@@ -54,10 +54,15 @@ export const CodeEditor = ({ value, onChange, theme }: CodeEditorProps) => {
             monaco.editor.setTheme(theme);
 
             // Allow generic imports to prevent "Cannot find module" errors (until ATA fetches them)
-            (monaco.languages.typescript as any).typescriptDefaults.setCompilerOptions({
-                moduleResolution: (monaco.languages.typescript as any).ModuleResolutionKind.NodeJs,
-                target: (monaco.languages.typescript as any).ScriptTarget.ESNext,
+            // Use the new top-level typescript namespace if available, fallback to deprecated path for safety
+            const ts = monaco.typescript;
+
+            ts.typescriptDefaults.setCompilerOptions({
+                moduleResolution: ts.ModuleResolutionKind.NodeJs,
+                target: ts.ScriptTarget.ESNext,
+                module: ts.ModuleKind.ESNext,
                 allowNonTsExtensions: true,
+                lib: ['esnext', 'dom'],
             });
         }
     }, [monaco]);
@@ -73,9 +78,14 @@ export const CodeEditor = ({ value, onChange, theme }: CodeEditorProps) => {
     useEffect(() => {
         if (!editorRef.current || !monaco) return;
 
+        // Initialize decorations collection if needed
+        if (!decorationsCollectionRef.current) {
+            decorationsCollectionRef.current = editorRef.current.createDecorationsCollection();
+        }
+
         const updateDecorations = () => {
             if (!matchLines) {
-                decorationsRef.current = editorRef.current.deltaDecorations(decorationsRef.current, []);
+                decorationsCollectionRef.current.clear();
                 return;
             }
 
@@ -107,7 +117,7 @@ export const CodeEditor = ({ value, onChange, theme }: CodeEditorProps) => {
                 });
             });
 
-            decorationsRef.current = editorRef.current.deltaDecorations(decorationsRef.current, newDecorations);
+            decorationsCollectionRef.current.set(newDecorations);
         };
 
         // Debounce updates to avoid freezing editor on heavy output

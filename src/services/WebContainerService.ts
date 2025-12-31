@@ -89,7 +89,7 @@ export class WebContainerService {
 
             const transpiled = ts.transpileModule(codeToRun, {
                 compilerOptions: {
-                    module: ts.ModuleKind.CommonJS,
+                    module: ts.ModuleKind.ESNext,
                     target: ts.ScriptTarget.ES2022,
                     esModuleInterop: true,
                 }
@@ -97,7 +97,7 @@ export class WebContainerService {
 
             // Console Shim
             const consoleShim = `
-const { format } = require('util');
+import { format } from 'util';
 
 const __runts_log = console.log;
 
@@ -122,9 +122,9 @@ process.on('unhandledRejection', (reason, promise) => {
 `;
 
             const finalCode = consoleShim + '\n' + transpiled.outputText;
-            await writeFile('index.cjs', finalCode);
+            await writeFile('index.js', finalCode);
 
-            const process = await instance.spawn('node', ['index.cjs'], {
+            const process = await instance.spawn('node', ['index.js'], {
                 env: { ...envVars }
             });
 

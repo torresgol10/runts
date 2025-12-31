@@ -3,7 +3,9 @@ import { RuntsState, PackagesSlice } from '../types';
 import { webContainerService } from '../../services/WebContainerService';
 
 export const createPackagesFeature: StateCreator<RuntsState, [], [], PackagesSlice> = (set, get) => ({
-    dependencies: {},
+    dependencies: {
+        "@types/node": "latest"
+    },
 
     installPackage: async (pkg: string) => {
         const { appendOutput, refreshDependencies } = get();
