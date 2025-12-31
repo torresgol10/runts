@@ -33,6 +33,10 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-background text-text-primary font-sans antialiased selection:bg-accent selection:text-white;
     background-image:
