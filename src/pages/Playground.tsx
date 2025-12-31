@@ -78,11 +78,11 @@ export function Playground() {
     }
 
     return (
-        <div className="flex h-screen w-full bg-transparent text-white overflow-hidden p-3 gap-3">
+        <div className="flex flex-col md:flex-row h-screen w-full bg-transparent text-white overflow-hidden p-3 gap-3">
             <CommandPalette />
 
             {/* Sidebar Floating Panel */}
-            <div className="h-full shrink-0 flex flex-col z-50">
+            <div className="shrink-0 flex flex-col z-50 w-full h-auto md:w-auto md:h-full order-last md:order-first">
                 <Sidebar
                     onInstall={installPackage}
                     onRun={runCode}
@@ -95,7 +95,7 @@ export function Playground() {
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 flex flex-col h-full min-w-0 gap-3">
+            <div className="flex-1 flex flex-col min-h-0 gap-3 overflow-hidden">
                 {/* Tabs Bar */}
                 <div className="shrink-0 pt-1">
                     <Tabs

@@ -60,9 +60,9 @@ export const Sidebar = ({
     return (
         <div
             ref={sidebarRef}
-            className="w-16 flex flex-col items-center glass-panel rounded-2xl border-r border-white/5 py-4 gap-4 relative z-50 h-full shadow-[5px_0_30px_rgba(0,0,0,0.3)] transition-all duration-300"
+            className="w-full md:w-16 h-16 md:h-full flex flex-row md:flex-col items-center justify-between md:justify-start glass-panel rounded-t-2xl md:rounded-2xl md:rounded-r-none border-t md:border-t-0 md:border-r border-white/5 px-4 md:px-0 py-0 md:py-4 gap-2 md:gap-4 relative z-50 shadow-[0_-5px_30px_rgba(0,0,0,0.3)] md:shadow-[5px_0_30px_rgba(0,0,0,0.3)] transition-all duration-300"
         >
-            <div className="mb-2 hover:scale-105 transition-transform duration-300">
+            <div className="hidden md:block mb-2 hover:scale-105 transition-transform duration-300">
                 <Logo />
             </div>
 
@@ -90,10 +90,11 @@ export const Sidebar = ({
                 <Zap size={20} fill={autoRunEnabled ? 'currentColor' : 'none'} />
             </button>
 
-            <div className="w-8 h-[1px] bg-white/10 my-1 shrink-0" />
+            <div className="hidden md:block w-8 h-[1px] bg-white/10 my-1 shrink-0" />
+            <div className="md:hidden w-[1px] h-8 bg-white/10 mx-1 shrink-0" />
 
             {/* Scrollable Icons Area */}
-            <div className="flex-1 flex flex-col items-center gap-3 w-full overflow-y-auto no-scrollbar py-2">
+            <div className="flex-1 flex flex-row md:flex-col items-center justify-center md:justify-start gap-3 md:w-full overflow-x-auto md:overflow-x-hidden md:overflow-y-auto no-scrollbar py-0 md:py-2">
                 {/* Snippets */}
                 <div className="relative group shrink-0" id="btn-snippets">
                     <button
@@ -127,7 +128,8 @@ export const Sidebar = ({
                     </button>
                 </div>
 
-                <div className="w-8 h-[1px] bg-white/10 my-1 shrink-0" />
+                <div className="hidden md:block w-8 h-[1px] bg-white/10 my-1 shrink-0" />
+                <div className="md:hidden w-[1px] h-8 bg-white/10 mx-1 shrink-0" />
 
                 {/* Format */}
                 <button
@@ -154,7 +156,7 @@ export const Sidebar = ({
             </div>
 
             {/* Settings */}
-            <div className="mt-auto relative pb-2 group">
+            <div className="mt-0 md:mt-auto relative pb-0 md:pb-2 group">
                 <button
                     onClick={() => togglePopover('settings')}
                     className={`p-2 rounded-2xl transition-all duration-200 cursor-pointer ${activePopover === 'settings' ? 'text-white bg-white/10 shadow-inner' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
@@ -169,25 +171,25 @@ export const Sidebar = ({
             {/* Ideally we would calculate Top position, but for now we'll just check activePopover */}
 
             {activePopover === 'snippets' && (
-                <div className="absolute left-full top-20 ml-4 glass-panel rounded-2xl p-4 shadow-2xl z-[60] min-w-[300px] animate-in fade-in slide-in-from-left-4 duration-200">
+                <div className="fixed bottom-20 left-4 right-4 md:absolute md:left-full md:top-20 md:ml-4 md:bottom-auto md:right-auto md:w-auto glass-panel rounded-2xl p-4 shadow-2xl z-[60] min-w-[300px] animate-in slide-in-from-bottom-10 md:slide-in-from-left-4 fade-in duration-200">
                     <SnippetManager />
                 </div>
             )}
 
             {activePopover === 'package' && (
-                <div className="absolute left-full top-32 ml-4 glass-panel rounded-2xl p-4 shadow-2xl z-[60] min-w-[320px] animate-in fade-in slide-in-from-left-4 duration-200">
+                <div className="fixed bottom-20 left-4 right-4 md:absolute md:left-full md:top-32 md:ml-4 md:bottom-auto md:right-auto md:w-auto glass-panel rounded-2xl p-4 shadow-2xl z-[60] min-w-[300px] md:min-w-[320px] animate-in slide-in-from-bottom-10 md:slide-in-from-left-4 fade-in duration-200">
                     <PackageManager />
                 </div>
             )}
 
             {activePopover === 'env' && (
-                <div className="absolute left-full top-44 ml-4 glass-panel rounded-2xl p-4 shadow-2xl z-[60] min-w-[300px] animate-in fade-in slide-in-from-left-4 duration-200">
+                <div className="fixed bottom-20 left-4 right-4 md:absolute md:left-full md:top-44 md:ml-4 md:bottom-auto md:right-auto md:w-auto glass-panel rounded-2xl p-4 shadow-2xl z-[60] min-w-[300px] animate-in slide-in-from-bottom-10 md:slide-in-from-left-4 fade-in duration-200">
                     <EnvManager />
                 </div>
             )}
 
             {activePopover === 'settings' && (
-                <div className="absolute left-full bottom-4 ml-4 w-72 glass-panel border border-white/10 rounded-2xl shadow-2xl p-5 z-[60] animate-in fade-in slide-in-from-left-4 duration-200">
+                <div className="fixed bottom-20 left-4 right-4 md:absolute md:left-full md:bottom-4 md:ml-4 md:right-auto md:w-72 glass-panel border border-white/10 rounded-2xl shadow-2xl p-5 z-[60] animate-in slide-in-from-bottom-10 md:slide-in-from-left-4 fade-in duration-200">
                     <h3 className="text-sm font-semibold mb-4 border-b border-white/10 pb-2 text-white/90">Settings</h3>
                     <div className="space-y-4 text-sm">
                         <div className="flex justify-between items-center">
