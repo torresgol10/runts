@@ -24,7 +24,7 @@ export const CodeEditor = ({ value, onChange, theme }: CodeEditorProps) => {
         if (!ataRef.current) {
             ataRef.current = createTypeFetcher((code, path) => {
                 if (monaco) {
-                    (monaco.languages.typescript as any).typescriptDefaults.addExtraLib(code, path || '');
+                    monaco.typescript.typescriptDefaults.addExtraLib(code, path || '');
                 }
             });
         }
