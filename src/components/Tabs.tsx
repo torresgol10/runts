@@ -74,7 +74,7 @@ export const Tabs = ({ tabs, activeTabId, onTabClick, onTabClose, onNewTab, onRe
                     <button
                         onClick={(e) => onTabClose(tab.id, e)}
                         className={clsx(
-                            "rounded-full p-0.5 transition-all opacity-0 group-hover:opacity-100",
+                            "rounded-full p-0.5 transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100",
                             activeTabId === tab.id ? "hover:bg-white/20 text-gray-400 hover:text-white" : "hover:bg-white/10 text-gray-600 hover:text-gray-300"
                         )}
                     >
