@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import { useStore } from '../store/useStore';
-import { CodeEditor } from '../components/Editor';
-import { Console } from '../components/Console';
 import { Tabs } from '../components/Tabs';
+import { ResizableLayout } from '../components/ResizableLayout';
 import { Sidebar } from '../components/Sidebar';
 import { CommandPalette } from '../components/CommandPalette';
 import lzString from 'lz-string';
@@ -108,38 +107,15 @@ export function Playground() {
                     />
                 </div>
 
-                <div className="flex-1 flex flex-col md:flex-row min-h-0 gap-3">
-                    {/* Editor Panel */}
-                    <div className="flex-1 h-1/2 md:h-full min-h-0 glass-panel rounded-2xl overflow-hidden shadow-2xl relative">
-                        <div className="absolute inset-0 bg-[#09090b]/50 backdrop-blur-sm -z-10" />
-
-                        <div className="w-full h-full">
-                            {activeTab && (
-                                <CodeEditor
-                                    value={activeTab.content}
-                                    onChange={(val) => updateTabContent(activeTab!.id, val || '')}
-                                    theme={theme}
-                                />
-                            )}
-                            {!activeTab && (
-                                <div className="flex flex-col items-center justify-center h-full text-gray-500 gap-4">
-                                    <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center">
-                                        <div className="w-8 h-8 rounded-full border-2 border-white/10 border-t-accent animate-spin" />
-                                    </div>
-                                    <p className="font-mono text-sm opacity-50">Select or create a file</p>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Console Panel */}
-                    <div className="h-1/2 md:h-full md:w-[40%] md:min-w-[300px] flex flex-col min-h-0 glass-panel rounded-2xl overflow-hidden shadow-2xl">
-                        <Console
-                            logs={output}
-                            onClear={clearOutput}
-                            matchLines={matchLines}
-                        />
-                    </div>
+                <div className="flex-1 min-h-0 relative">
+                    <ResizableLayout
+                        activeTab={activeTab}
+                        output={output}
+                        clearOutput={clearOutput}
+                        matchLines={matchLines}
+                        updateTabContent={updateTabContent}
+                        theme={theme}
+                    />
                 </div>
             </div>
         </div>
