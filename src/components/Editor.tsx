@@ -62,8 +62,30 @@ export const CodeEditor = ({ value, onChange, theme }: CodeEditorProps) => {
                 target: ts.ScriptTarget.ESNext,
                 module: ts.ModuleKind.ESNext,
                 allowNonTsExtensions: true,
+                allowSyntheticDefaultImports: true,
+                moduleDetection: 3, // Force module detection to enable top-level await
                 lib: ['esnext', 'dom'],
             });
+
+            // Add Node.js types shim
+            monaco.typescript.typescriptDefaults.addExtraLib(
+                `
+                declare var require: {
+                    (id: string): any;
+                    resolve(id: string): string;
+                    cache: any;
+                    extensions: any;
+                    main: any;
+                };
+                declare var module: any;
+                declare var process: any;
+                declare var global: any;
+                declare var console: any;
+                declare var __dirname: string;
+                declare var __filename: string;
+                `,
+                'ts:filename/node-shim.d.ts'
+            );
         }
     }, [monaco]);
 

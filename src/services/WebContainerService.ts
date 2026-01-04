@@ -98,7 +98,9 @@ export class WebContainerService {
             // Console Shim
             const consoleShim = `
 import { format } from 'util';
+import { createRequire } from 'module';
 
+const require = createRequire(import.meta.url);
 const __runts_log = console.log;
 
 function safeLog(prefix, ...args) {
