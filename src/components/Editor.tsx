@@ -87,7 +87,7 @@ export const CodeEditor = ({ value, onChange, theme }: CodeEditorProps) => {
                 'ts:filename/node-shim.d.ts'
             );
         }
-    }, [monaco]);
+    }, [monaco, theme]);
 
     // Update theme when it changes
     useEffect(() => {

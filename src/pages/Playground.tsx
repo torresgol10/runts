@@ -48,7 +48,7 @@ export function Playground() {
             }
         }
         boot();
-    }, []);
+    }, [boot, deserialize]);
 
     // Get active tab content
     const activeTab = tabs.find(t => t.id === activeTabId);

@@ -1,4 +1,4 @@
-// @ts-ignore
+
 import { Panel, Group as PanelGroup, Separator as PanelResizeHandle } from 'react-resizable-panels';
 import { Tab, LogEntry } from '../store/types';
 import { CodeEditor } from './Editor';

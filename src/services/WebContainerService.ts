@@ -149,7 +149,9 @@ process.on('unhandledRejection', (reason, promise) => {
                         try {
                             line = parseInt(match[1]);
                             content = content.replace(/\[RUNTS_LINE:\d+\]\s*,?\s*/, '');
-                        } catch (e) { }
+                        } catch (e) {
+                            // ignore parsing error
+                        }
                     }
                 }
 
