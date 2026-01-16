@@ -8,6 +8,7 @@ import { SnippetManager } from './SnippetManager';
 import { EnvManager } from './EnvManager';
 import { downloadProjectZip } from '../utils/project';
 import { formatCode } from '../utils/prettier';
+import { useShallow } from 'zustand/react/shallow';
 
 import { ShareButton } from './ShareButton';
 
@@ -31,7 +32,17 @@ export const Sidebar = ({
     currentTheme,
     onThemeChange
 }: SidebarProps) => {
-    const { activeTabId, tabs, updateTabContent, matchLines, toggleMatchLines } = useStore();
+    // Optimization: Select only what we need for rendering using useShallow
+    const { activeTabId, matchLines } = useStore(
+        useShallow(state => ({
+            activeTabId: state.activeTabId,
+            matchLines: state.matchLines
+        }))
+    );
+    
+    const updateTabContent = useStore(state => state.updateTabContent);
+    const toggleMatchLines = useStore(state => state.toggleMatchLines);
+
     const [activePopover, setActivePopover] = useState<PopoverType>('none');
     const sidebarRef = useRef<HTMLDivElement>(null);
 
@@ -40,6 +51,8 @@ export const Sidebar = ({
     };
 
     const handleFormat = async () => {
+        // Optimization: Access tabs directly from state to avoid subscription and re-renders on every keystroke
+        const tabs = useStore.getState().tabs;
         const activeTab = tabs.find(t => t.id === activeTabId);
         if (activeTab) {
             const formatted = await formatCode(activeTab.content);
@@ -48,6 +61,8 @@ export const Sidebar = ({
     };
 
     const handleSave = () => {
+         // Optimization: Access tabs directly from state
+        const tabs = useStore.getState().tabs;
         downloadProjectZip(tabs.map(t => ({ name: t.title, content: t.content })));
     };
 

@@ -1,5 +1,6 @@
 import Editor, { useMonaco, OnMount } from '@monaco-editor/react';
 import { useEffect, useRef } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { themes, ThemeId } from '../utils/themes';
 import { useStore } from '../store/useStore';
 import { createTypeFetcher } from '../utils/typeFetcher';
@@ -14,7 +15,13 @@ interface CodeEditorProps {
 
 export const CodeEditor = ({ value, onChange, theme }: CodeEditorProps) => {
     const monaco = useMonaco();
-    const { output, matchLines, dependencies } = useStore();
+    const { output, matchLines, dependencies } = useStore(
+        useShallow(state => ({
+            output: state.output,
+            matchLines: state.matchLines,
+            dependencies: state.dependencies
+        }))
+    );
     const editorRef = useRef<any>(null);
     const decorationsCollectionRef = useRef<any>(null);
     const ataRef = useRef<ReturnType<typeof createTypeFetcher> | null>(null);

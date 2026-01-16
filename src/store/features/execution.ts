@@ -58,7 +58,12 @@ export const createExecutionFeature: StateCreator<RuntsState, [], [], ExecutionS
     },
 
     runCode: async () => {
-        const { tabs, activeTabId, envVars, matchLines, appendLogs } = get();
+        const { tabs, activeTabId, envVars, matchLines, appendLogs, isBooted } = get();
+
+        if (!isBooted) {
+            console.warn('[Execution] WebContainer not booted yet. Aborting run.');
+            return;
+        }
 
         webContainerService.kill(); // Ensure previous stopped
         set({ isRunning: true, output: [] });
