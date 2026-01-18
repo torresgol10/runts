@@ -1,10 +1,22 @@
 
 import { Panel, Group as PanelGroup, Separator as PanelResizeHandle } from 'react-resizable-panels';
 import { Tab, LogEntry } from '../store/types';
-import { CodeEditor } from './Editor';
 import { Console } from './Console';
 import { ThemeId } from '../utils/themes';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
+
+// Lazy load Monaco Editor to improve initial page load (LCP)
+const CodeEditor = lazy(() => import('./Editor').then(m => ({ default: m.CodeEditor })));
+
+// Loading skeleton for editor
+const EditorSkeleton = () => (
+    <div className="w-full h-full flex flex-col items-center justify-center bg-[#09090b]/80 gap-4 animate-pulse">
+        <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center">
+            <div className="w-6 h-6 rounded-full border-2 border-white/10 border-t-accent animate-spin" />
+        </div>
+        <p className="font-mono text-sm text-white/30">Loading editor...</p>
+    </div>
+);
 
 interface ResizableLayoutProps {
     activeTab: Tab | undefined;
@@ -38,11 +50,13 @@ export function ResizableLayout({ activeTab, output, clearOutput, matchLines, up
                 <div className="absolute inset-0 bg-[#09090b]/50 backdrop-blur-sm -z-10" />
                 <div className="w-full h-full">
                     {activeTab && (
-                        <CodeEditor
-                            value={activeTab.content}
-                            onChange={(val) => updateTabContent(activeTab!.id, val || '')}
-                            theme={theme}
-                        />
+                        <Suspense fallback={<EditorSkeleton />}>
+                            <CodeEditor
+                                value={activeTab.content}
+                                onChange={(val) => updateTabContent(activeTab!.id, val || '')}
+                                theme={theme}
+                            />
+                        </Suspense>
                     )}
                     {!activeTab && (
                         <div className="flex flex-col items-center justify-center h-full text-gray-500 gap-4">

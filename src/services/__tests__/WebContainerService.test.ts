@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { LogEntry } from '../../store/types';
 
 // Mock functions declared inside the factory to avoid hoisting issues
 vi.mock('../../webcontainer/instance', () => {
