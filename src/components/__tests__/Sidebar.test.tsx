@@ -5,7 +5,6 @@ import { Sidebar } from '../Sidebar';
 
 describe('Sidebar Component', () => {
     const defaultProps = {
-        onInstall: vi.fn(),
         onRun: vi.fn(),
         isRunning: false,
         autoRunEnabled: true,

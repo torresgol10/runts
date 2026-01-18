@@ -122,3 +122,10 @@
     opacity: 1;
   }
 }
+
+/* Monaco Editor inline log decorations */
+.inline-log-decoration {
+  color: #6b7280 !important;
+  font-style: italic !important;
+  margin-left: 10px !important;
+}

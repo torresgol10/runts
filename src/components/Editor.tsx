@@ -1,5 +1,6 @@
 import Editor, { useMonaco, OnMount } from '@monaco-editor/react';
-import { useEffect, useRef } from 'react';
+import type * as monaco from 'monaco-editor';
+import { useEffect, useRef, useCallback } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { themes, ThemeId } from '../utils/themes';
 import { useStore } from '../store/useStore';
@@ -22,8 +23,8 @@ export const CodeEditor = ({ value, onChange, theme }: CodeEditorProps) => {
             dependencies: state.dependencies
         }))
     );
-    const editorRef = useRef<any>(null);
-    const decorationsCollectionRef = useRef<any>(null);
+    const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+    const decorationsCollectionRef = useRef<monaco.editor.IEditorDecorationsCollection | null>(null);
     const ataRef = useRef<ReturnType<typeof createTypeFetcher> | null>(null);
 
     // Initialize ATA (Auto Type Acquisition)
@@ -113,12 +114,12 @@ export const CodeEditor = ({ value, onChange, theme }: CodeEditorProps) => {
         }
 
         const updateDecorations = () => {
-            if (!matchLines) {
-                decorationsCollectionRef.current.clear();
+            if (!matchLines || !decorationsCollectionRef.current) {
+                decorationsCollectionRef.current?.clear();
                 return;
             }
 
-            const newDecorations: any[] = [];
+            const newDecorations: monaco.editor.IModelDeltaDecoration[] = [];
             const logsByLine = new Map<number, string[]>();
 
             output.forEach(log => {
@@ -137,16 +138,14 @@ export const CodeEditor = ({ value, onChange, theme }: CodeEditorProps) => {
                     options: {
                         after: {
                             content: `  ${display}`,
-                            color: '#6b7280',
-                            margin: '0 0 0 10px',
-                            fontStyle: 'italic',
+                            inlineClassName: 'inline-log-decoration',
                             cursorStops: monaco.editor.InjectedTextCursorStops.None
                         }
                     }
                 });
             });
 
-            decorationsCollectionRef.current.set(newDecorations);
+            decorationsCollectionRef.current?.set(newDecorations);
         };
 
         // Debounce updates to avoid freezing editor on heavy output
@@ -156,8 +155,49 @@ export const CodeEditor = ({ value, onChange, theme }: CodeEditorProps) => {
 
     }, [output, matchLines, monaco]);
 
+    // TypeScript Error Markers - Show inline diagnostics
+    const updateDiagnostics = useCallback(async () => {
+        if (!monaco || !editorRef.current) return;
+
+        const model = editorRef.current.getModel();
+        if (!model) return;
+
+        const worker = await monaco.typescript.getTypeScriptWorker();
+        const client = await worker(model.uri);
+
+        const [syntactic, semantic] = await Promise.all([
+            client.getSyntacticDiagnostics(model.uri.toString()),
+            client.getSemanticDiagnostics(model.uri.toString())
+        ]);
+
+        const allDiagnostics = [...syntactic, ...semantic];
+
+        const markers: monaco.editor.IMarkerData[] = allDiagnostics.map(d => {
+            const start = model.getPositionAt(d.start || 0);
+            const end = model.getPositionAt((d.start || 0) + (d.length || 1));
+            return {
+                severity: monaco.MarkerSeverity.Error,
+                message: typeof d.messageText === 'string' ? d.messageText : d.messageText.messageText,
+                startLineNumber: start.lineNumber,
+                startColumn: start.column,
+                endLineNumber: end.lineNumber,
+                endColumn: end.column,
+            };
+        });
+
+        monaco.editor.setModelMarkers(model, 'typescript', markers);
+    }, [monaco]);
+
+    // Debounced diagnostics update on content change
+    useEffect(() => {
+        if (!monaco || !editorRef.current) return;
+        const timer = setTimeout(updateDiagnostics, 500);
+        return () => clearTimeout(timer);
+    }, [value, monaco, updateDiagnostics]);
+
     const handleMount: OnMount = (editor, monacoInstance) => {
         editorRef.current = editor;
+        if (!monacoInstance) return;
 
         // Add Format Command (Shift + Alt + F)
         editor.addCommand(monacoInstance.KeyMod.Shift | monacoInstance.KeyMod.Alt | monacoInstance.KeyCode.KeyF, async () => {

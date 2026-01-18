@@ -20,7 +20,6 @@ export function Playground() {
         clearOutput,
         runCode,
         isRunning,
-        installPackage,
         autoRunEnabled,
         toggleAutoRun,
         renameTab,
@@ -83,7 +82,6 @@ export function Playground() {
             {/* Sidebar Floating Panel */}
             <div className="shrink-0 flex flex-col z-50 w-full h-auto md:w-auto md:h-full order-last md:order-first">
                 <Sidebar
-                    onInstall={installPackage}
                     onRun={runCode}
                     isRunning={isRunning}
                     autoRunEnabled={autoRunEnabled}

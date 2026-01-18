@@ -13,7 +13,6 @@ import { useShallow } from 'zustand/react/shallow';
 import { ShareButton } from './ShareButton';
 
 interface SidebarProps {
-    onInstall: (pkg: string) => void;
     onRun: () => void;
     isRunning: boolean;
     autoRunEnabled: boolean;
@@ -39,7 +38,7 @@ export const Sidebar = ({
             matchLines: state.matchLines
         }))
     );
-    
+
     const updateTabContent = useStore(state => state.updateTabContent);
     const toggleMatchLines = useStore(state => state.toggleMatchLines);
 
@@ -61,7 +60,7 @@ export const Sidebar = ({
     };
 
     const handleSave = () => {
-         // Optimization: Access tabs directly from state
+        // Optimization: Access tabs directly from state
         const tabs = useStore.getState().tabs;
         downloadProjectZip(tabs.map(t => ({ name: t.title, content: t.content })));
     };
@@ -112,6 +111,7 @@ export const Sidebar = ({
                     : 'bg-gradient-to-br from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white hover:shadow-green-500/30 hover:scale-110'
                     }`}
                 title="Run (Ctrl+Enter)"
+                aria-label="Run code"
             >
                 <div className={`absolute inset-0 rounded-full bg-white/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${isRunning ? 'hidden' : ''}`} />
                 <Play size={20} fill="currentColor" className="relative z-10" />
@@ -124,6 +124,7 @@ export const Sidebar = ({
                     : 'text-text-secondary hover:text-white hover:bg-white/5'
                     }`}
                 title="Toggle Auto-Run"
+                aria-label={autoRunEnabled ? 'Disable auto-run' : 'Enable auto-run'}
             >
                 <Zap size={20} fill={autoRunEnabled ? 'currentColor' : 'none'} />
             </button>
@@ -139,6 +140,8 @@ export const Sidebar = ({
                         onClick={() => togglePopover('snippets')}
                         className={`p-2 rounded-2xl transition-all duration-200 cursor-pointer ${activePopover === 'snippets' ? 'text-white bg-white/10 shadow-inner' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
                         title="Snippets"
+                        aria-label="Open snippets manager"
+                        aria-expanded={activePopover === 'snippets'}
                     >
                         <Scissors size={20} />
                     </button>
@@ -150,6 +153,8 @@ export const Sidebar = ({
                         onClick={() => togglePopover('package')}
                         className={`p-2 rounded-2xl transition-all duration-200 cursor-pointer ${activePopover === 'package' ? 'text-white bg-white/10 shadow-inner' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
                         title="Packages"
+                        aria-label="Open package manager"
+                        aria-expanded={activePopover === 'package'}
                     >
                         <Package size={20} />
                     </button>
@@ -161,6 +166,8 @@ export const Sidebar = ({
                         onClick={() => togglePopover('env')}
                         className={`p-2 rounded-2xl transition-all duration-200 cursor-pointer ${activePopover === 'env' ? 'text-white bg-white/10 shadow-inner' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
                         title="Environment Variables"
+                        aria-label="Open environment variables"
+                        aria-expanded={activePopover === 'env'}
                     >
                         <Database size={20} />
                     </button>
@@ -174,6 +181,7 @@ export const Sidebar = ({
                     onClick={handleFormat}
                     className="p-2 rounded-2xl text-text-secondary hover:text-white hover:bg-white/5 transition-colors cursor-pointer shrink-0"
                     title="Format Code (Prettier)"
+                    aria-label="Format code with Prettier"
                 >
                     <AlignLeft size={20} />
                 </button>
@@ -183,6 +191,7 @@ export const Sidebar = ({
                     onClick={handleSave}
                     className="p-2 rounded-2xl text-text-secondary hover:text-white hover:bg-white/5 transition-colors cursor-pointer shrink-0"
                     title="Export Project (ZIP)"
+                    aria-label="Export project as ZIP"
                 >
                     <Save size={20} />
                 </button>
@@ -199,6 +208,8 @@ export const Sidebar = ({
                     onClick={() => togglePopover('settings')}
                     className={`p-2 rounded-2xl transition-all duration-200 cursor-pointer ${activePopover === 'settings' ? 'text-white bg-white/10 shadow-inner' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
                     title="Settings"
+                    aria-label="Open settings"
+                    aria-expanded={activePopover === 'settings'}
                 >
                     <Settings size={20} className={activePopover === 'settings' ? 'rotate-90 transition-transform duration-300' : 'transition-transform duration-300 group-hover:rotate-45'} />
                 </button>
