@@ -11,7 +11,7 @@ export const createExecutionFeature: StateCreator<RuntsState, [], [], ExecutionS
     matchLines: true,
 
     boot: async () => {
-        if (get().isBooted) return;
+        if (get().isBooted || get().bootStatus === 'booting') return;
         try {
             set({ bootStatus: 'booting' });
             await webContainerService.boot(get().dependencies);
