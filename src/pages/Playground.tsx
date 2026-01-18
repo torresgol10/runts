@@ -9,6 +9,7 @@ import lzString from 'lz-string';
 export function Playground() {
     const {
         isBooted,
+        bootStatus,
         boot,
         tabs,
         activeTabId,
@@ -69,7 +70,12 @@ export function Playground() {
             <div className="flex h-screen w-full items-center justify-center bg-background text-white animate-pulse">
                 <div className="text-center">
                     <h1 className="text-4xl font-bold text-accent mb-4">RunTS</h1>
-                    <p className="text-gray-400 font-mono">Booting WebContainer Environment...</p>
+                    <p className="text-gray-400 font-mono">
+                        {bootStatus === 'restoring' ? 'Restoring packages...' :
+                            bootStatus === 'booting' ? 'Booting WebContainer...' :
+                                'Initializing environment...'}
+                    </p>
+                    {bootStatus === 'restoring' && <p className="text-xs text-gray-600 mt-2">This might take a moment</p>}
                 </div>
             </div>
         );

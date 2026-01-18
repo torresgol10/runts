@@ -32,6 +32,7 @@ export interface TabsSlice {
 
 export interface ExecutionSlice {
     isBooted: boolean;
+    bootStatus?: 'initializing' | 'booting' | 'restoring' | 'ready' | 'error';
     isRunning: boolean;
     output: LogEntry[];
     autoRunEnabled: boolean;

@@ -4,6 +4,7 @@ import { webContainerService } from '../../services/WebContainerService';
 
 export const createExecutionFeature: StateCreator<RuntsState, [], [], ExecutionSlice> = (set, get) => ({
     isBooted: false,
+    bootStatus: 'initializing', // 'initializing' | 'booting' | 'restoring' | 'ready'
     isRunning: false,
     output: [],
     autoRunEnabled: true,
@@ -12,17 +13,20 @@ export const createExecutionFeature: StateCreator<RuntsState, [], [], ExecutionS
     boot: async () => {
         if (get().isBooted) return;
         try {
+            set({ bootStatus: 'booting' });
             await webContainerService.boot(get().dependencies);
             set({ isBooted: true });
 
             // Restore dependencies
             if (Object.keys(get().dependencies).length > 0) {
+                set({ bootStatus: 'restoring' });
                 const { appendOutput } = get();
                 appendOutput('[System] Restoring dependencies...');
                 await webContainerService.restoreDependencies((data) => appendOutput(data));
                 appendOutput('[System] Dependencies restored.');
             }
 
+            set({ bootStatus: 'ready' });
             get().refreshDependencies();
 
             if (get().autoRunEnabled) {
@@ -30,7 +34,10 @@ export const createExecutionFeature: StateCreator<RuntsState, [], [], ExecutionS
             }
         } catch (error) {
             console.error('Failed to boot WebContainer', error);
-            set({ output: [{ id: 'err', content: '[System] Failed to boot WebContainer.', timestamp: Date.now(), method: 'error' }] });
+            set({
+                output: [{ id: 'err', content: '[System] Failed to boot WebContainer.', timestamp: Date.now(), method: 'error' }],
+                bootStatus: 'error'
+            });
         }
     },
 
